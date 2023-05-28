@@ -1,0 +1,359 @@
+import {BottomTabBar} from '@react-navigation/bottom-tabs';
+import {
+  Background,
+  getDefaultHeaderHeight,
+  getHeaderTitle,
+  Header,
+  HeaderHeightContext,
+  HeaderShownContext,
+} from '@react-navigation/elements';
+import {
+  createNavigatorFactory,
+  NavigationContext,
+  NavigationRouteContext,
+  TabRouter,
+  useNavigationBuilder,
+} from '@react-navigation/native';
+import React from 'react';
+import {Dimensions, View, StyleSheet} from 'react-native';
+import {
+  SafeAreaProvider,
+  useSafeAreaFrame,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import {ScreenContainer, Screen as Screens} from 'react-native-screens';
+
+const {width = 0, height = 0} = Dimensions.get('window');
+
+// To support SSR on web, we need to have empty insets for initial values
+// Otherwise there can be mismatch between SSR and client output
+// We also need to specify empty values to support tests environments
+const initialMetrics = {
+  frame: {x: 0, y: 0, width, height},
+  insets: {top: 0, left: 0, right: 0, bottom: 0},
+};
+
+export function SafeAreaProviderCompat({children, style}) {
+  return (
+    <SafeAreaProvider initialMetrics={initialMetrics} style={style}>
+      {children}
+    </SafeAreaProvider>
+  );
+}
+
+SafeAreaProviderCompat.initialMetrics = initialMetrics;
+
+export function MyTab({
+  id,
+  initialRouteName,
+  backBehavior,
+  children,
+  screenListeners,
+  screenOptions,
+  sceneContainerStyle,
+  // tabBar,
+  ...restWithDeprecated
+}) {
+  const {lazy, ...rest} = restWithDeprecated;
+
+  const {state, navigation, descriptors, NavigationContent} =
+    useNavigationBuilder(TabRouter, {
+      id,
+      initialRouteName,
+      backBehavior,
+      children,
+      screenListeners,
+      screenOptions,
+      // defaultScreenOptions,
+    });
+
+  return (
+    <NavigationContent>
+      <BottomTabView
+        {...rest}
+        state={state}
+        navigation={navigation}
+        descriptors={descriptors}
+        sceneContainerStyle={sceneContainerStyle}
+      />
+    </NavigationContent>
+  );
+}
+
+function BottomTabView(props) {
+  const {
+    tabBar = propst => <BottomTabBar {...propst} />,
+    state,
+    navigation,
+    descriptors,
+    safeAreaInsets,
+    detachInactiveScreens = true,
+    sceneContainerStyle,
+  } = props;
+  const focusedRouteKey = state.routes[state.index].key;
+  const [loaded, setLoaded] = React.useState([focusedRouteKey]);
+
+  if (!loaded.includes(focusedRouteKey)) {
+    setLoaded([...loaded, focusedRouteKey]);
+  }
+  const dimensions = SafeAreaProviderCompat.initialMetrics.frame;
+
+  const renderTabBar = () => {
+    return tabBar({
+      state: state,
+      descriptors: descriptors,
+      navigation: navigation,
+      insets: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+      },
+    });
+  };
+
+  const {routes} = state;
+
+  return (
+    <View
+      nativeID="gestureHandlerWrapper"
+      style={[
+        {
+          flex: 1,
+        },
+      ]}>
+      <ScreenContainer
+        nativeID="ScreenContainer"
+        enabled={true}
+        style={[{flex: 1}]}>
+        {routes.map((route, index) => {
+          const descriptor = descriptors[route.key];
+          const {lazy = true, unmountOnBlur} = descriptor.options;
+          const isFocused = state.index === index;
+
+          if (unmountOnBlur && !isFocused) {
+            return null;
+          }
+
+          if (lazy && !loaded.includes(route.key) && !isFocused) {
+            return null;
+          }
+
+          const {
+            header = ({layout, options}) => (
+              <Header
+                {...options}
+                layout={layout}
+                title={getHeaderTitle(options, route.name)}
+              />
+            ),
+            freezeOnBlur,
+            headerShown,
+            headerStatusBarHeight,
+            headerTransparent,
+            headerStyle,
+          } = descriptor.options;
+
+          return (
+            <Screens
+              nativeID={'Screens'}
+              pointerEvents={'box-none'}
+              key={route.key}
+              style={[
+                StyleSheet.absoluteFill,
+                {zIndex: isFocused ? 0 : -1, display: 'flex'},
+              ]}
+              activityState={isFocused ? 2 : 0}
+              enabled={detachInactiveScreens}
+              freezeOnBlur={freezeOnBlur}>
+              {/* <Sheet render={descriptor.render} /> */}
+              <View
+                nativeID="c-a"
+                pointerEvents="box-none"
+                style={[
+                  StyleSheet.absoluteFill,
+                  {
+                    display: 'flex',
+                    overflow: undefined,
+                  },
+                ]}>
+                <View nativeID="c-c" pointerEvents="box-none" style={{flex: 1}}>
+                  <View
+                    nativeID="innerLast"
+                    pointerEvents="box-none"
+                    style={[
+                      {flex: 1},
+                      //cardSheet place
+                    ]}>
+                    <MyScreen
+                      focused={isFocused}
+                      route={descriptor.route}
+                      navigation={descriptor.navigation}
+                      headerShown={headerShown}
+                      headerStyle={headerStyle}
+                      headerStatusBarHeight={headerStatusBarHeight}
+                      headerTransparent={headerTransparent}
+                      header={header({
+                        layout: dimensions,
+                        route: descriptor.route,
+                        navigation: descriptor.navigation,
+                        options: descriptor.options,
+                      })}>
+                      {descriptor.render()}
+                    </MyScreen>
+                  </View>
+                </View>
+              </View>
+            </Screens>
+          );
+        })}
+      </ScreenContainer>
+      {renderTabBar()}
+    </View>
+  );
+}
+
+function MyScreen(props) {
+  const dimensions = useSafeAreaFrame();
+  const insets = useSafeAreaInsets();
+
+  const isParentHeaderShown = React.useContext(HeaderShownContext);
+  const parentHeaderHeight = React.useContext(HeaderHeightContext);
+
+  const {
+    focused,
+    modal = false,
+    header,
+    headerShown = true,
+    headerTransparent,
+    tabHeaderHeight,
+    headerStyle,
+    headerStatusBarHeight = isParentHeaderShown ? 0 : insets.top,
+    navigation,
+    route,
+    children,
+    style,
+  } = props;
+  const defaultHeaderHeight = getDefaultHeaderHeight(
+    dimensions,
+    modal,
+    headerStatusBarHeight,
+  );
+  const [headerHeight, setHeaderHeight] = React.useState(
+    headerStyle?.height ?? defaultHeaderHeight,
+  );
+
+  return (
+    <Background
+      accessibilityElementsHidden={!focused}
+      importantForAccessibility={focused ? 'auto' : 'no-hide-descendants'}
+      style={[styles.reverse, style]}>
+      <View style={[styles.content]}>
+        <HeaderShownContext.Provider
+          value={isParentHeaderShown || headerShown !== false}>
+          <HeaderHeightContext.Provider
+            value={headerShown ? headerHeight : parentHeaderHeight ?? 0}>
+            {children}
+          </HeaderHeightContext.Provider>
+        </HeaderShownContext.Provider>
+      </View>
+      {headerShown ? (
+        <NavigationContext.Provider value={navigation}>
+          <NavigationRouteContext.Provider value={route}>
+            <View
+              onLayout={e => {
+                const {height} = e.nativeEvent.layout;
+
+                setHeaderHeight(height);
+              }}
+              style={headerTransparent ? styles.absolute : null}>
+              {header}
+            </View>
+          </NavigationRouteContext.Provider>
+        </NavigationContext.Provider>
+      ) : null}
+    </Background>
+  );
+}
+
+const CardSheet = React.forwardRef(function (
+  {enabled, layout, style, ...rest},
+  ref,
+) {
+  const [fill, setFill] = React.useState(false);
+
+  React.useEffect(() => {
+    if (typeof document === 'undefined' || !document.body) {
+      // Only run when DOM is available
+      return;
+    }
+
+    const width = document.body.clientWidth;
+    const height = document.body.clientHeight;
+    console.log();
+    setFill(width === layout.width && height === layout.height);
+  }, [layout.height, layout.width]);
+
+  return (
+    <View
+      nativeID="fromForwardRef "
+      {...rest}
+      ref={ref}
+      style={[enabled && fill ? styles.page : styles.card, style]}
+    />
+  );
+});
+function Sheet({render}) {
+  const layout = initialMetrics.frame;
+  const contentRef = React.useRef();
+  return (
+    <View
+      nativeID="c-a"
+      pointerEvents="box-none"
+      style={[StyleSheet.absoluteFill, {display: 'flex', overflow: undefined}]}>
+      <View nativeID="c-c" pointerEvents="box-none" style={{flex: 1}}>
+        <View nativeID="cardCon1" style={{flex: 1}}>
+          <CardSheet layout={layout} ref={contentRef} enabled={true}>
+            <View style={[styles.hidden]}>
+              <View style={{flex: 1}}>{render()}</View>
+            </View>
+          </CardSheet>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const createBottomTabNavigator = createNavigatorFactory(MyTab);
+
+export default createBottomTabNavigator;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+  },
+  reverse: {
+    flexDirection: 'column-reverse',
+    flex: 1,
+  },
+  hidden: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  page: {
+    minHeight: '100%',
+  },
+  card: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+  absolute: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+  },
+});

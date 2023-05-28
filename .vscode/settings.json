@@ -1,0 +1,17 @@
+{
+  "eslint.workingDirectories": [
+    {
+      "directory": "./client",
+      "changeProcessCWD": true
+    }
+  ],
+  "editor.showUnused": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.formatOnSave": true,
+  "eslint.validate": ["javascript"],
+  //"prettier.eslintIntegration": true,
+  "javascript.format.enable": false,
+  "explorer.sortOrder": "foldersNestsFiles"
+}
