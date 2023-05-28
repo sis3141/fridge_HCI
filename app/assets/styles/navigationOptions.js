@@ -1,8 +1,6 @@
-import COLORS from 'app/assets/styles/colors';
 import {getW, getWFloat, WINDOW_WIDTH} from '@constants/appUnits';
-import font from 'app/assets/styles/textStyle';
-import {StackHeader} from 'app/components/navigationComponents';
 import {Platform} from 'react-native';
+import COLORS from './colors';
 
 export const NAV_OPTIONS = {
   defaultHeaderStyle: {

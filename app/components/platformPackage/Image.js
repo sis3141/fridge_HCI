@@ -1,5 +1,5 @@
 import {WINDOW_WIDTH, getW} from '@constants/appUnits';
-import COLORS from 'app/assets/styles/colors';
+import COLORS from '@styles/colors';
 import React, {useEffect, useState} from 'react';
 
 import {ActivityIndicator, Animated, Image, View} from 'react-native';

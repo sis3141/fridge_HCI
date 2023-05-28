@@ -1,9 +1,4 @@
-export const LOTTIE_SOURCE = {
-  payLoading: require('@lotties/payLoading.json'),
-};
+export const LOTTIE_SOURCE = {};
 
-export const LOCAL_IMAGE = {
-
-};
-export const COMMON_ICON = {
-};
+export const LOCAL_IMAGE = {};
+export const COMMON_ICON = {};

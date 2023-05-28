@@ -1,6 +1,5 @@
 import {getW} from '@constants/appUnits';
-import React from 'react';
-import {Platform, Text} from 'react-native';
+import {Platform} from 'react-native';
 const light =
   Platform.OS === 'web'
     ? {fontFamily: 'Pretendard', fontWeight: 300}
@@ -33,5 +32,10 @@ const getLH = (fontsize, ratio) => {
 
 const font = {
   //title, cartitem title
-}
+  placeHolder: {
+    ...regular,
+    fontSize: getW(40),
+    color: 'black',
+  },
+};
 export default font;

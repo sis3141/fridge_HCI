@@ -1,18 +1,16 @@
 import React from 'react';
 import {Image_local} from '@platformPackage/Image';
 import {Horizon} from '@templates/defaultComps';
-import {COMMON_ICON, NAV_ICON} from '@constants/imageMap';
+import {COMMON_ICON} from '@constants/imageMap';
 import {IS_WEB, WINDOW_HEIGHT, WINDOW_WIDTH} from '@constants/appUnits';
-import {NAV_OPTIONS} from 'app/assets/styles/navigationOptions';
 import {getW} from '@constants/appUnits';
-import {View} from 'react-native';
-import COLORS from 'app/assets/styles/colors';
-import {Tbold36} from 'app/assets/styles/textStyle';
+import {View, Text} from 'react-native';
 import {getHeaderTitle} from '@react-navigation/elements';
 
-import {PressGoBack, PressNavigate} from '@atoms/actionWrappers';
-import {CONTAINER} from 'app/assets/styles/containers';
 import {TransitionPresets} from '@react-navigation/stack';
+import COLORS from '@styles/colors';
+import {NAV_OPTIONS} from '@styles/navigationOptions';
+import {PressGoBack} from '@userInteraction/pressAction';
 
 const customTransitionOptions = {
   bottomModalOption: {
@@ -223,17 +221,17 @@ const headerRight = {
 };
 
 const headerLeft = {
-  HOME: (
-    <PressNavigate
-      style={{position: 'absolute', left: getW(32)}}
-      routeName={'home'}>
-      <Image_local
-        tint={COLORS.navColor}
-        style={CONTAINER.box54}
-        source={NAV_ICON.homeOff}
-      />
-    </PressNavigate>
-  ),
+  // HOME: (
+  //   <PressNavigate
+  //     style={{position: 'absolute', left: getW(32)}}
+  //     routeName={'home'}>
+  //     <Image_local
+  //       tint={COLORS.navColor}
+  //       style={CONTAINER.box54}
+  //       source={NAV_ICON.homeOff}
+  //     />
+  //   </PressNavigate>
+  // ),
 };
 
 export const getStackHeader = ({
@@ -297,7 +295,7 @@ export function StackHeader({
       nativeID="StackHeader"
       style={[NAV_OPTIONS.defaultHeaderStyle, style]}>
       {headerLeft[leftType]}
-      {showTitle ? <Tbold36>{title}</Tbold36> : null}
+      {showTitle ? <Text>{title}</Text> : null}
       {headerRight[rightType]}
     </Horizon>
   );

@@ -4,7 +4,6 @@ import RootStackNavigator from '@navigators/stack/RootStack';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 
 import {CreatePageHeaderContext, CreateUserDataContext} from '@hooks/context';
-import {hideBootSplash} from '@platformPackage/BootSplash';
 import {CustomToastProvider} from '@platformPackage/Toast';
 
 export const NavigationStateContext = createContext();
@@ -28,7 +27,6 @@ function AppNavigationContainer({navContext}) {
             }}
             onReady={() => {
               // console.log('nav ready!');
-              hideBootSplash();
             }}
             ref={_rootNavigationRef}
             theme={{

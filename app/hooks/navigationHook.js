@@ -1,6 +1,5 @@
 // #region helperfunction
 
-import {IS_WEB} from '@constants/appUnits';
 import {navigationConfig} from '@navigationConfigs/navigationConfig';
 import {useHeaderHeight} from '@react-navigation/elements';
 import {
@@ -12,11 +11,9 @@ import {
   useNavigationState,
   useRoute,
 } from '@react-navigation/native';
-import {WEB_BASEURL} from '@_constants/appInfo';
 import {isEmpty} from '@_utils/validation';
-import {useState, useLayoutEffect, useEffect, useCallback} from 'react';
-import {Linking, Platform} from 'react-native';
-import {EventLog, logException} from './Attribution';
+import {useState, useLayoutEffect, useEffect} from 'react';
+import {Platform} from 'react-native';
 import {getFlatNavigationStructure} from '@navigationConfigs/navigationFunctions';
 
 // helper functions for navigation function and hooks
@@ -318,7 +315,6 @@ export const _useNavFunctions = () => {
         // console.log('new state : ', JSON.stringify(newState));
         _rootNavigationRef.resetRoot(newState);
       } catch (error) {
-        logException({error});
         console.log('error from remove specificRoute', error);
       }
     },
@@ -384,7 +380,6 @@ export const _useNavFunctions = () => {
             : navigation.navigate(navigateObj.screen, navigateObj.params);
         }
       } catch (error) {
-        logException({error});
         console.log('errorfrom _navigate', error);
       }
     },
@@ -464,7 +459,6 @@ export const _useNavFunctions = () => {
         //   JSON.stringify(_rootNavigationRef.getRootState()),
         // );
       } catch (error) {
-        logException({error});
         console.log('errorfrom _navigate', error);
       }
     },
@@ -590,7 +584,6 @@ export const _useNavFunctions = () => {
           // });
         }
       } catch (error) {
-        logException({error});
         console.log('errorfrom _replace', error);
       }
     },
@@ -775,14 +768,6 @@ export const _useNavFunctions = () => {
           return FUNCTIONS._replace;
       }
     },
-    _openWebViewLink: ({url, title = '', eventLocationInfo = {}}) => {
-      EventLog.openExternalLink({...eventLocationInfo, name: title, url});
-      if (IS_WEB) {
-        Linking.openURL(url);
-      } else {
-        FUNCTIONS._navigate('LinkWebView', {url, title});
-      }
-    },
   };
 
   return FUNCTIONS;
@@ -828,45 +813,4 @@ export const useModalHistoryControl = ({data, checkParam}) => {
       _goBack();
     }
   }, []);
-};
-
-export const useCloseInteractionEvent = eventConfig => {
-  const isFocused = useIsFocused();
-  const [closed, setClosed] = useState(!isFocused);
-  const preventCloseEvent = useCallback(() => {
-    setClosed(true);
-  }, []);
-  useEffect(() => {
-    if (!isFocused && !closed) {
-      EventLog.interaction(eventConfig);
-    } else {
-      setClosed(false);
-    }
-  }, [isFocused]);
-  return {preventCloseEvent};
-};
-export const useCloseInteractionEventStrict = eventConfig => {
-  const isFocused = useIsFocusedForEvent();
-  const [closed, setClosed] = useState(!isFocused);
-  const preventCloseEvent = useCallback(() => {
-    setClosed(true);
-  }, []);
-  useEffect(() => {
-    if (!isFocused && !closed) {
-      EventLog.interaction(eventConfig);
-    } else {
-      setClosed(false);
-    }
-  }, [isFocused]);
-  return {preventCloseEvent};
-};
-
-export const webForceNavigate = (routeName, navigate, navigationConfig) => {
-  IS_WEB
-    ? window.location.assign(
-        `${WEB_BASEURL}${
-          navigationConfig[routeName].linkConfig.path.split(':')[0]
-        }`,
-      )
-    : navigate(routeName);
 };

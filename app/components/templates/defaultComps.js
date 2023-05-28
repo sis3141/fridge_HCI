@@ -1,9 +1,5 @@
-import {getW, IS_WEB, TABBAR_HEIGHT_ROUGH} from '@constants/appUnits';
-import {useRouteHandleEffect} from '@hooks/appMange';
-import COLORS from 'app/assets/styles/colors';
-import {CONTAINER} from 'app/assets/styles/containers';
-import font from 'app/assets/styles/textStyle';
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import {getW, IS_WEB} from '@constants/appUnits';
+import React, {useEffect, useState, useRef} from 'react';
 import {View, Platform, SectionList} from 'react-native';
 import {
   FlatList_P,
@@ -11,12 +7,12 @@ import {
   TextInput_P,
 } from '@platformPackage/gestureComponent';
 
-import {LoadingModal} from './fixedAtoms';
-import {PressCallback, PressGoBack} from '../atoms/actionWrappers';
 import {_useNavFunctions} from '@hooks/navigationHook';
-import {TopBtn} from '@actors/constSetters';
 import {isEmpty} from '@_utils/validation';
-import {TABBAR_PAGE} from '@_constants/appInfo';
+import {CONTAINER} from '@styles/containers';
+import COLORS from '@styles/colors';
+import font from '@styles/textStyle';
+import {PressCallback, PressGoBack} from '@userInteraction/pressAction';
 
 //정렬, 마진등 스타일을 wrapping 해주는 컴포넌트
 
@@ -50,8 +46,7 @@ export const ScrollView_defaultPage = ({
   eventLocationInfo,
   TopAbsoluteComponent,
   BottomAbsoluteComponent,
-  useTopBtn,
-  additionalTopBtnMargin = 0,
+
   style,
   viewStyle,
   outRef,
@@ -66,27 +61,12 @@ export const ScrollView_defaultPage = ({
   onScroll: externalOnScroll = null,
   ...rest
 }) => {
-  const [topBtnVisible, setTopBtnVisible] = useState(false);
   const defaultRef = useRef(null);
   const routeName = _useNavFunctions()._getFocusedRouteName();
   const FixedRouteName = React.useMemo(() => routeName, []);
-  const topBtnFloatHeight =
-    (useTopBtn && TABBAR_PAGE.includes(FixedRouteName)) || hasTabbar
-      ? TABBAR_HEIGHT_ROUGH
-      : 0;
-  const topBtnOnScroll = useTopBtn
-    ? e => {
-        if (!topBtnVisible && e.nativeEvent.contentOffset.y > 400) {
-          setTopBtnVisible(true);
-        }
-        if (topBtnVisible && e.nativeEvent.contentOffset.y < 100) {
-          setTopBtnVisible(false);
-        }
-      }
-    : () => {};
-  const hasOnScroll = useTopBtn || externalOnScroll;
+
+  const hasOnScroll = externalOnScroll;
   const onScroll = e => {
-    topBtnOnScroll(e);
     externalOnScroll && externalOnScroll(e);
   };
   return (
@@ -142,17 +122,6 @@ export const ScrollView_defaultPage = ({
           {BottomAbsoluteComponent}
         </View>
       ) : null}
-      {topBtnVisible && useTopBtn ? (
-        <TopBtn
-          eventLocationInfo={eventLocationInfo}
-          type="normal"
-          customMarginH={additionalTopBtnMargin + topBtnFloatHeight}
-          scrollRef={defaultRef}
-          movedCallback={() => {
-            setTopBtnVisible(false);
-          }}
-        />
-      ) : null}
     </View>
   );
 };
@@ -162,8 +131,6 @@ export const SectionList_defaultPage = ({
   eventLocationInfo,
   BottomAbsoluteComponent,
   stickyHideOffset = 0,
-  useTopBtn = true,
-  additionalTopBtnMargin = 0,
   headerHeight,
   style,
   viewStyle,
@@ -183,7 +150,6 @@ export const SectionList_defaultPage = ({
   keyExtractor = (item, index) => index,
   ...rest
 }) => {
-  const [topBtnVisible, setTopBtnVisible] = useState(false);
   useEffect(() => {
     if (isEmpty(eventInfo?.inited)) {
       return;
@@ -202,26 +168,9 @@ export const SectionList_defaultPage = ({
   const defaultRef = useRef();
   const routeName = _useNavFunctions()._getFocusedRouteName();
   const FixedRouteName = React.useMemo(() => routeName, []);
-  const topBtnFloatHeight =
-    (useTopBtn && TABBAR_PAGE.includes(FixedRouteName)) || hasTabbar
-      ? TABBAR_HEIGHT_ROUGH
-      : 0;
-  const topBtnOnScroll = useCallback(
-    useTopBtn
-      ? e => {
-          if (!topBtnVisible && e.nativeEvent.contentOffset.y > 400) {
-            setTopBtnVisible(true);
-          }
-          if (topBtnVisible && e.nativeEvent.contentOffset.y < 100) {
-            setTopBtnVisible(false);
-          }
-        }
-      : null,
-    [useTopBtn],
-  );
-  const hasOnScroll = useTopBtn || externalOnScroll;
+
+  const hasOnScroll = externalOnScroll;
   const onScroll = e => {
-    topBtnOnScroll(e);
     externalOnScroll && externalOnScroll(e);
   };
   return (
@@ -280,17 +229,6 @@ export const SectionList_defaultPage = ({
           {BottomAbsoluteComponent}
         </View>
       ) : null}
-      {topBtnVisible ? (
-        <TopBtn
-          eventLocationInfo={eventLocationInfo}
-          type="flatList"
-          customMarginH={additionalTopBtnMargin + topBtnFloatHeight}
-          scrollRef={defaultRef}
-          movedCallback={() => {
-            setTopBtnVisible(false);
-          }}
-        />
-      ) : null}
     </View>
   );
 };
@@ -299,8 +237,6 @@ export const FlatList_defaultPage = ({
   eventLocationInfo,
   BottomAbsoluteComponent,
   onViewableItemsChanged,
-  useTopBtn = true,
-  additionalTopBtnMargin = 0,
   headerHeight,
   stickyHideOffset = 0,
   style,
@@ -322,28 +258,11 @@ export const FlatList_defaultPage = ({
   removeClippedSubviews = true,
   ...rest
 }) => {
-  const [topBtnVisible, setTopBtnVisible] = useState(false);
-
   const defaultRef = useRef(null);
   const routeName = _useNavFunctions()._getFocusedRouteName();
   const FixedRouteName = React.useMemo(() => routeName, []);
-  const topBtnFloatHeight =
-    (useTopBtn && TABBAR_PAGE.includes(FixedRouteName)) || hasTabbar
-      ? TABBAR_HEIGHT_ROUGH
-      : 0;
-  const topBtnOnScroll = useTopBtn
-    ? e => {
-        if (!topBtnVisible && e.nativeEvent.contentOffset.y > 400) {
-          setTopBtnVisible(true);
-        }
-        if (topBtnVisible && e.nativeEvent.contentOffset.y < 100) {
-          setTopBtnVisible(false);
-        }
-      }
-    : () => {};
-  const hasOnScroll = useTopBtn || externalOnScroll;
+
   const onScroll = e => {
-    topBtnOnScroll(e);
     externalOnScroll && externalOnScroll(e);
   };
   return (
@@ -362,7 +281,6 @@ export const FlatList_defaultPage = ({
         ListHeaderComponent={ListHeaderComponent}
         ListEmptyComponent={ListEmptyComponent}
         ListFooterComponent={ListFooterComponent}
-        {...(hasOnScroll ? {onScroll} : {})}
         ref={outRef ?? defaultRef}
         data={data}
         renderItem={renderItem}
@@ -405,17 +323,6 @@ export const FlatList_defaultPage = ({
           }}>
           {BottomAbsoluteComponent}
         </View>
-      ) : null}
-      {topBtnVisible ? (
-        <TopBtn
-          eventLocationInfo={eventLocationInfo}
-          type="normal"
-          customMarginH={additionalTopBtnMargin + topBtnFloatHeight}
-          scrollRef={outRef ?? defaultRef}
-          movedCallback={() => {
-            setTopBtnVisible(false);
-          }}
-        />
       ) : null}
     </View>
   );
@@ -483,21 +390,6 @@ export const HorizonSpaceBetween = props => (
     {props.children}
   </View>
 );
-
-export const RouteWrapper = ({...props}) => {
-  const {showLoadingComponent, disable, loadingTitle} = useRouteHandleEffect();
-  const [loadingAppear, setLoadingAppear] = useState(showLoadingComponent);
-
-  useEffect(() => {
-    setLoadingAppear(showLoadingComponent);
-  }, [showLoadingComponent]);
-  return (
-    <View pointerEvents={disable ? 'none' : 'auto'} style={[{flex: 1}]}>
-      {props.children}
-      {loadingAppear ? <LoadingModal title={loadingTitle} /> : null}
-    </View>
-  );
-};
 
 export const TextInput_defalt = ({
   style,

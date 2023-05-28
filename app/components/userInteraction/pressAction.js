@@ -1,10 +1,10 @@
-import {BTN_DISABLE_MS} from '@_constants/appInfo';
 import {_useNavFunctions} from '@hooks/navigationHook';
-import {RIPPLE_STYLE} from 'app/assets/styles/colors';
 import {sleep} from '@_utils/handling';
 import React, {useState} from 'react';
 import {Pressable} from 'react-native';
 import {isExist} from '@_utils/validation';
+import {RIPPLE_STYLE} from '@styles/colors';
+import {BTN_DISABLE_MS} from '@_constants/units';
 
 //api, navigate, setState등의 액션을 wrapping 해주는 컴포넌트
 

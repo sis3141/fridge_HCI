@@ -1,6 +1,4 @@
 import {getW} from '@constants/appUnits';
-import COLORS from 'app/assets/styles/colors';
-import font from 'app/assets/styles/textStyle';
 import React from 'react';
 import {ToastProvider, useToast} from 'react-native-toast-notifications';
 
@@ -19,8 +17,8 @@ export function CustomToastProvider({children}) {
     <ToastProvider
       duration={1600}
       offsetBottom={getW(120)}
-      textStyle={{...font.medium30, color: 'white'}}
-      normalColor={COLORS.black70P}>
+      textStyle={{fontSize: getW(30), color: 'white'}}
+      normalColor={'rgba(0,0,0,0,7)'}>
       {children}
     </ToastProvider>
   );
