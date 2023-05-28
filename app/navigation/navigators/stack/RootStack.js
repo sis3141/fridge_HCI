@@ -1,17 +1,20 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import BottomModal from '@routes/modal/BottomModal';
 import CenterModal from '@routes/modal/CenterModal';
 import {IS_THICK, REAL_WIDTH, WINDOW_WIDTH} from '@constants/appUnits';
 import {createStackNavigator} from '@react-navigation/stack';
-import {PageHeaderContext, SignContext} from '@hooks/context';
-import {TransitionOptions} from '@components/navigationComponents';
+import {
+  TransitionOptions,
+  getEmptyHeader,
+} from '@components/navigationComponents';
+import Home from '@routes/normal/Home';
+import Search from '@routes/normal/Search';
+import ItemDetail from '@routes/normal/ItemDetail';
 // import createStackNavigator from '@navigators/createStackNavigator';
 // import {createMyStack} from './MyStackNavigator';
 
 const Stack = createStackNavigator();
 function RootStackNavigator({splashOptions = {}}) {
-  const {stickyInfo} = useContext(PageHeaderContext);
-  const {completeSignCheck} = useContext(SignContext);
   // console.log('🔥focused route : ', _getFocusedRouteName());
 
   return (
@@ -23,7 +26,15 @@ function RootStackNavigator({splashOptions = {}}) {
           flex: 1,
         },
       }}>
-      <Stack.Group screenOptions={{...TransitionOptions.STACK_DEFAULT}} />
+      <Stack.Group screenOptions={{...TransitionOptions.STACK_DEFAULT}}>
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options={{...getEmptyHeader()}}
+        />
+        <Stack.Screen name="Search" component={Search} />
+        <Stack.Screen name="ItemDetail" component={ItemDetail} />
+      </Stack.Group>
       <Stack.Group screenOptions={{...TransitionOptions.BOTTOM_MODAL}}>
         <Stack.Screen name="BottomModal" component={BottomModal} />
       </Stack.Group>

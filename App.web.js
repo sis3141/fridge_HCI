@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, TextInput} from 'react-native';
 
 import AppNavigationContainer from '@navigationConfigs/AppNavigationContainer';
+import {CreateUserDataContext} from '@hooks/userDataContext';
 Text.defaultProps = {
   ...(Text.defaultProps || {}),
   allowFontScaling: false,
@@ -16,10 +17,12 @@ function App() {
 
   if (serviceInitial.ready) {
     return (
-      <AppNavigationContainer
-        navContext={serviceInitial.navContext}
-        hasLastState={serviceInitial.hasLastState}
-      />
+      <CreateUserDataContext>
+        <AppNavigationContainer
+          navContext={serviceInitial.navContext}
+          hasLastState={serviceInitial.hasLastState}
+        />
+      </CreateUserDataContext>
     );
   } else {
     return <View style={{flex: 1}} />;

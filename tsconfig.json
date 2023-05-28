@@ -40,6 +40,7 @@
       "@icons/*": ["./app/assets/icons/*"],
       "@platformPackage/*": ["./app/components/platformPackage/*"],
       "@userInteraction/*": ["./app/components/userInteraction/*"],
+      "@UI/*": ["./app/components/UI/*"],
       "@components/*": ["./app/components/*"],
       "@packages/*": ["./app/packages/*"],
       "@atoms/*": ["./app/components/atoms/*"],

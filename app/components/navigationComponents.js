@@ -1,14 +1,11 @@
 import React from 'react';
-import {Image_local} from '@platformPackage/Image';
 import {Horizon} from '@templates/defaultComps';
-import {COMMON_ICON} from '@constants/imageMap';
 import {IS_WEB, WINDOW_HEIGHT, WINDOW_WIDTH} from '@constants/appUnits';
 import {getW} from '@constants/appUnits';
 import {View, Text} from 'react-native';
 import {getHeaderTitle} from '@react-navigation/elements';
 
 import {TransitionPresets} from '@react-navigation/stack';
-import COLORS from '@styles/colors';
 import {NAV_OPTIONS} from '@styles/navigationOptions';
 import {PressGoBack} from '@userInteraction/pressAction';
 
@@ -207,11 +204,11 @@ const CustomGobackHeaderLeft = ({position}) => {
         position: 'absolute',
         left: 0,
       }}>
-      <Image_local
+      {/* <Image_local
         tint={COLORS.navColor}
         source={COMMON_ICON.headerBack}
         style={{width: getW(24), height: getW(48)}}
-      />
+      /> */}
     </PressGoBack>
   );
 };

@@ -40,6 +40,7 @@
           "@displays": "./app/components/displays",
           "@platformPackage": "./app/components/platformPackage",
           "@userInteraction": "./app/components/userInteraction",
+          "@UI": "./app/components/UI",
           "@components": "./app/components",
           "@packages": "./app/packages",
 

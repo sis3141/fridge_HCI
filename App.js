@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Text, TextInput} from 'react-native';
 
 import AppNavigationContainer from '@navigationConfigs/AppNavigationContainer';
+import {CreateUserDataContext} from '@hooks/userDataContext';
 
 // import NetInfo from '@react-native-community/netinfo';
 
@@ -18,11 +19,13 @@ function App() {
   const [serviceInitial, setServiceInitial] = useState({ready: true});
 
   return (
-    <AppNavigationContainer
-      initialState={serviceInitial.initialState}
-      navContext={serviceInitial.navContext}
-      hasLastState={serviceInitial.hasLastState}
-    />
+    <CreateUserDataContext>
+      <AppNavigationContainer
+        initialState={serviceInitial.initialState}
+        navContext={serviceInitial.navContext}
+        hasLastState={serviceInitial.hasLastState}
+      />
+    </CreateUserDataContext>
   );
 }
 

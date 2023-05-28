@@ -1,29 +1,10 @@
 import {getW} from '@constants/appUnits';
-import {Platform} from 'react-native';
-const light =
-  Platform.OS === 'web'
-    ? {fontFamily: 'Pretendard', fontWeight: 300}
-    : {fontFamily: 'Pretendard-Light'};
-const regular =
-  Platform.OS === 'web'
-    ? {fontFamily: 'Pretendard', fontWeight: 400}
-    : {fontFamily: 'Pretendard-Regular'};
-const medium =
-  Platform.OS === 'web'
-    ? {fontFamily: 'Pretendard', fontWeight: 500}
-    : {fontFamily: 'Pretendard-Medium'};
-const semiBold =
-  Platform.OS === 'web'
-    ? {fontFamily: 'Pretendard', fontWeight: 600}
-    : {fontFamily: 'Pretendard-SemiBold'};
-const bold =
-  Platform.OS === 'web'
-    ? {fontFamily: 'Pretendard', fontWeight: 700}
-    : {fontFamily: 'Pretendard-Bold'};
-const extraBold =
-  Platform.OS === 'web'
-    ? {fontFamily: 'Pretendard', fontWeight: 800}
-    : {fontFamily: 'Pretendard-ExtraBold'};
+const light = {fontFamily: 'Pretendard', fontWeight: 300};
+const regular = {fontFamily: 'Pretendard', fontWeight: 400};
+const medium = {fontFamily: 'Pretendard', fontWeight: 500};
+const semiBold = {fontFamily: 'Pretendard', fontWeight: 600};
+const bold = {fontFamily: 'Pretendard', fontWeight: 700};
+const extraBold = {fontFamily: 'Pretendard', fontWeight: 800};
 // const generateTextComponent = ()
 const getLH = (fontsize, ratio) => {
   const height = Math.round(getW(fontsize) * ratio);
@@ -32,9 +13,45 @@ const getLH = (fontsize, ratio) => {
 
 const font = {
   //title, cartitem title
+  light,
+  regular,
+  medium,
+  semiBold,
+  bold,
+  extraBold,
   placeHolder: {
     ...regular,
     fontSize: getW(40),
+    color: 'black',
+  },
+  semi26: {
+    ...semiBold,
+    fontSize: getW(26),
+    color: 'black',
+  },
+  semi18: {
+    ...semiBold,
+    fontSize: getW(18),
+    color: 'black',
+  },
+  semi16: {
+    ...semiBold,
+    fontSize: getW(16),
+    color: 'black',
+  },
+  bold16: {
+    ...bold,
+    fontSize: getW(16),
+    color: 'black',
+  },
+  semi20: {
+    ...semiBold,
+    fontSize: getW(20),
+    color: 'black',
+  },
+  semi12: {
+    ...semiBold,
+    fontSize: getW(12),
     color: 'black',
   },
 };
