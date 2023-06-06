@@ -29,6 +29,11 @@ const font = {
     fontSize: getW(26),
     color: 'black',
   },
+  semi32: {
+    ...semiBold,
+    fontSize: getW(32),
+    color: 'black',
+  },
   semi18: {
     ...semiBold,
     fontSize: getW(18),
@@ -52,6 +57,11 @@ const font = {
   semi12: {
     ...semiBold,
     fontSize: getW(12),
+    color: 'black',
+  },
+  semi14: {
+    ...semiBold,
+    fontSize: getW(14),
     color: 'black',
   },
 };

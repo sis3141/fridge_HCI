@@ -24,7 +24,10 @@ const reducer = (prevState, action) => {
       const newList = action.newList;
       const dangerList = newList.filter(foodObj => {
         const {addDate, expireDate} = foodObj;
-        return CALCS.isDanger({inputDate: addDate, expireDate});
+
+        return CALCS.isDanger({
+          dday: CALCS.getDDay({inputDate: addDate, expireDate}),
+        });
       });
       return {
         inited: true,

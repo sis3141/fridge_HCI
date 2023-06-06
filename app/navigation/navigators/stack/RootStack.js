@@ -1,5 +1,4 @@
 import React from 'react';
-import BottomModal from '@routes/modal/BottomModal';
 import CenterModal from '@routes/modal/CenterModal';
 import {IS_THICK, REAL_WIDTH, WINDOW_WIDTH} from '@constants/appUnits';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -10,6 +9,8 @@ import {
 import Home from '@routes/normal/Home';
 import Search from '@routes/normal/Search';
 import ItemDetail from '@routes/normal/ItemDetail';
+import ItemList from '@routes/normal/ItemList';
+import ItemAdd from '@routes/modal/ItemAdd';
 // import createStackNavigator from '@navigators/createStackNavigator';
 // import {createMyStack} from './MyStackNavigator';
 
@@ -33,10 +34,19 @@ function RootStackNavigator({splashOptions = {}}) {
           options={{...getEmptyHeader()}}
         />
         <Stack.Screen name="Search" component={Search} />
-        <Stack.Screen name="ItemDetail" component={ItemDetail} />
+        <Stack.Screen
+          name="ItemList"
+          component={ItemList}
+          options={{...getEmptyHeader()}}
+        />
+        <Stack.Screen
+          name="ItemDetail"
+          component={ItemDetail}
+          options={{...getEmptyHeader()}}
+        />
       </Stack.Group>
       <Stack.Group screenOptions={{...TransitionOptions.BOTTOM_MODAL}}>
-        <Stack.Screen name="BottomModal" component={BottomModal} />
+        <Stack.Screen name="ItemAdd" component={ItemAdd} />
       </Stack.Group>
       <Stack.Screen
         name="CenterModal"

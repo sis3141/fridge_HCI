@@ -2,6 +2,7 @@ import {HomeTPLs} from '@UI/homeUI';
 import {FOODS} from '@_constants/dataConfig';
 import {isEmpty} from '@_utils/validation';
 import {getW} from '@constants/appUnits';
+import {CALCS} from '@hooks/foodCalc';
 import {UserDataContext} from '@hooks/userDataContext';
 import {FlatList_P} from '@platformPackage/gestureComponent';
 import React, {useContext} from 'react';
@@ -13,15 +14,26 @@ function HomePage({headerHeight}) {
   const {cateDict} = foodList.reduce(
     (out, foodObj) => {
       const {cateDict} = out;
-      const {foodName} = foodObj;
+      const {foodName, addDate, expireDate, amount} = foodObj;
+      const dday = CALCS.getDDay({inputDate: addDate, expireDate});
       const {cate, unit} = FOODS[foodName];
       if (isEmpty(cateDict[cate])) {
         cateDict[cate] = {
           cate,
-          foods: [],
+          foods: {},
         };
       }
-      cateDict[cate].foods.push(foodObj);
+      if (isEmpty(cateDict[cate].foods[foodName])) {
+        cateDict[cate].foods[foodName] = {dday, variants: 1, ...foodObj};
+      } else {
+        let curFood = cateDict[cate].foods[foodName];
+        if (curFood.dday > dday) {
+          curFood.dday = dday;
+        }
+        curFood.amount += amount;
+        curFood.variants++;
+      }
+
       return {cateDict};
     },
     {cateDict: []},
@@ -30,6 +42,7 @@ function HomePage({headerHeight}) {
 
   return (
     <FlatList_P
+      style={{backgroundColor: 'white'}}
       ListHeaderComponent={
         <View>
           <HomeTPLs.header
@@ -38,7 +51,7 @@ function HomePage({headerHeight}) {
           />
           <HomeTPLs.dangerSwiper
             dangerItemList={dangerList}
-            style={{marginVertical: getW(20)}}
+            style={{marginTop: getW(20)}}
           />
         </View>
       }
@@ -46,7 +59,7 @@ function HomePage({headerHeight}) {
       renderItem={({item}) =>
         HomeTPLs.renderMyItem({
           cateItem: item,
-          style: {marginHorizontal: getW(20), marginBottom: getW(30)},
+          style: {marginBottom: getW(30)},
         })
       }
     />

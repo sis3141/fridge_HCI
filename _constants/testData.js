@@ -6,6 +6,12 @@ export const FOOD_LIST = [
     expireDate: 1685664000000,
   },
   {
+    foodName: '우유',
+    amount: 4,
+    addDate: 1685298471000,
+    expireDate: 1686031968000,
+  },
+  {
     foodName: '요거트',
     amount: 2,
     addDate: 1685298471000,

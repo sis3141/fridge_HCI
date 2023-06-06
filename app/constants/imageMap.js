@@ -3,8 +3,9 @@ export const COMMON_IC = {
   search: require('@icons/search.png'),
   fridge: require('@icons/fridge.png'),
   rightArrow: require('@icons/rightArrow.png'),
+  edit: require('@icons/edit.png'),
+  delete: require('@icons/delete.png'),
 };
-export const LOCAL_IMAGE = {};
 export const FD_CATE_IMG = {
   유제품: require('@icons/milk.png'),
   과일: require('@icons/fruit.png'),

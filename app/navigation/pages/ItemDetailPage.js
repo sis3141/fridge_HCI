@@ -1,8 +1,85 @@
+import {DetailTPL} from '@UI/detailUI';
+import {FOODS} from '@_constants/dataConfig';
+import {getDateString} from '@_utils/converters';
+import {Horizon} from '@components/templates/defaultComps';
+import {getW} from '@constants/appUnits';
+import {CALCS} from '@hooks/foodCalc';
+import {ScrollView_P} from '@platformPackage/gestureComponent';
+import COLORS from '@styles/colors';
+import SHADOW from '@styles/shadow';
+import font from '@styles/textStyle';
 import React from 'react';
-import {View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
-function ItemDetailPage({headerHeight}) {
-  return <View />;
+function ItemDetailPage({headerHeight, itemInfo}) {
+  const {foodName, addDate, expireDate, amount} = itemInfo;
+  const {cate} = FOODS[foodName];
+  const dday = CALCS.getDDay({expireDate});
+  const fullRange = CALCS.getFullRange({addDate, expireDate});
+  const isDanger = CALCS.isDanger({dday});
+  const indiColor = isDanger ? COLORS.red : COLORS.green;
+  const dangerRate = dday >= 0 ? (fullRange - dday) / fullRange : 1;
+
+  return (
+    <ScrollView_P style={{backgroundColor: 'white'}}>
+      <DetailTPL.detailHeader foodInfo={itemInfo} isDanger={isDanger} />
+      <Text
+        style={[
+          font.semi32,
+          {color: indiColor, alignSelf: 'center', marginTop: getW(15)},
+        ]}>
+        {`D-Day${dday <= 0 ? '' : ' ' + dday}`}
+      </Text>
+      <View style={[ST.barCard, {marginBottom: getW(10)}]}>
+        <Text style={[font.semi14, {color: '#a6a6a6', alignSelf: 'flex-end'}]}>
+          소비기한
+        </Text>
+        <View
+          style={{
+            width: getW(280),
+            height: getW(14),
+            marginVertical: getW(8),
+            backgroundColor: '#e6e8e9',
+            borderRadius: getW(20),
+            alignItems: 'flex-start',
+            alignSelf: 'center',
+          }}>
+          <View
+            style={{
+              width: getW(280) * dangerRate,
+              backgroundColor: indiColor,
+              height: getW(14),
+              borderRadius: getW(20),
+            }}
+          />
+        </View>
+        <Horizon style={{width: '100%', justifyContent: 'space-between'}}>
+          <Text style={[font.semi14, {color: '#a6a6a6'}]}>
+            {getDateString(new Date(addDate))}
+          </Text>
+          <Text style={[font.semi14, {color: '#a6a6a6'}]}>
+            {getDateString(new Date(expireDate))}
+          </Text>
+        </Horizon>
+      </View>
+      <DetailTPL.detailInfo foodInfo={itemInfo} />
+    </ScrollView_P>
+  );
 }
+
+const ST = StyleSheet.create({
+  barCard: {
+    marginHorizontal: getW(23),
+    borderRadius: getW(15),
+    paddingVertical: getW(10),
+    paddingHorizontal: getW(8),
+    ...SHADOW.basic,
+  },
+  descCard: {
+    paddingHorizontal: getW(23),
+    paddingVertical: getW(22),
+    alignItems: 'center',
+  },
+});
 
 export default ItemDetailPage;

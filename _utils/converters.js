@@ -25,3 +25,20 @@ export function pairsToFlat(pairList) {
     {flatlist: []},
   ).flatlist;
 }
+
+export function getDateString(dateObj, option = 'default') {
+  const year = String(dateObj.getFullYear());
+  let month = String(dateObj.getMonth());
+  if (month.length === 1) {
+    month = '0' + month;
+  }
+  let date = String(dateObj.getDate());
+  if (date.length === 1) {
+    date = '0' + date;
+  }
+  if (option === 'default') {
+    return year + '.' + month + '.' + date;
+  } else {
+    return year + '년 ' + month + '월 ' + date + '일';
+  }
+}

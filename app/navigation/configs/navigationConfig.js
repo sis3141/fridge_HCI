@@ -5,7 +5,7 @@ export const appDefaultInitialNavState = {
 
 export const navigationConfig = {
   RootStackNavigator: {
-    child: ['Home', 'Search', 'ItemDetail', 'ItemAdd'],
+    child: ['Home', 'Search', 'ItemDetail', 'ItemList', 'ItemAdd'],
     paths: {},
     linkConfig: {},
   },
@@ -18,6 +18,10 @@ export const navigationConfig = {
     linkConfig: {},
   },
   ItemDetail: {
+    paths: {},
+    linkConfig: {},
+  },
+  ItemList: {
     paths: {},
     linkConfig: {},
   },

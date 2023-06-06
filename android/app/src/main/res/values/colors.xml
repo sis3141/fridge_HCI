@@ -1,9 +1,0 @@
-<resources>
-    <color name="splashscreen_bg">#0085ff</color>
-    <color name="mainblue">#0066ff</color>
-    <color name="app_bg">#FFFFFF</color>
-    <color name="notification">#000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
-    <color name="bootsplash_background">#000000</color>
-</resources>

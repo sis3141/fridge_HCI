@@ -2,7 +2,7 @@ import React from 'react';
 import {getW} from '@constants/appUnits';
 import {COMMON_IC, FD_CATE_IMG} from '@constants/imageMap';
 import {Image_local} from '@platformPackage/Image';
-import {PressNavigate} from '@userInteraction/pressAction';
+import {PressGoBack, PressNavigate} from '@userInteraction/pressAction';
 import {Horizon} from '@components/templates/defaultComps';
 import {Text, View} from 'react-native';
 import SHADOW from '@styles/shadow';
@@ -45,15 +45,15 @@ const Atoms = {
     </PressNavigate>
   ),
   foodLabel: ({foodObj}) => {
-    const {foodName, addDate, amount, expireDate} = foodObj;
+    const {foodName, addDate, amount, expireDate, dday, variants = 0} = foodObj;
     const {unit} = FOODS[foodName];
-    const dday = CALCS.getDDay({inputDate: addDate, expireDate});
-    const isDanger = CALCS.isDanger({inputDate: addDate, expireDate});
+    const isDanger = CALCS.isDanger({dday});
+    const isMultiple = variants > 1;
     return (
       <PressNavigate
         horizon
-        routeName={'ItemDetail'}
-        extraParam={{foodName}}
+        routeName={isMultiple ? 'ItemList' : 'ItemDetail'}
+        extraParam={isMultiple ? {foodName} : {itemInfo: foodObj}}
         style={{
           justifyContent: 'space-between',
           height: getW(30),
@@ -122,31 +122,67 @@ export const HomeTPLs = {
       </Horizon>
     </Horizon>
   ),
+  listHeader: ({cate, foodName, style}) => (
+    <Horizon
+      style={{
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        ...style,
+      }}>
+      <PressGoBack>
+        <Image_local
+          source={COMMON_IC.rightArrow}
+          style={{
+            width: getW(48),
+            height: getW(48),
+            transform: [{rotate: '180deg'}],
+          }}
+        />
+      </PressGoBack>
+      <Horizon>
+        <Image_local
+          source={FD_CATE_IMG[cate]}
+          style={{width: getW(26), height: getW(26)}}
+        />
+        <Text style={[font.semi20]}>{foodName}</Text>
+      </Horizon>
+      <Horizon style={{marginRight: getW(12)}}>
+        <Atoms.search style={{marginRight: getW(8)}} />
+        <Atoms.add />
+      </Horizon>
+    </Horizon>
+  ),
   dangerSwiper: ({dangerItemList = [], style}) => {
     if (isExist(dangerItemList)) {
       return (
         <View style={{width: '100%', ...style}}>
-          <Text style={{marginLeft: getW(20)}}>폐기 임박!!!</Text>
+          <Text style={[font.semi14, {marginLeft: getW(30)}]}>
+            폐기 임박!!!
+          </Text>
           <HorizonCardSwiper
             cardWidth={getW(60)}
             cardMargin={getW(16)}
             containerPadding={getW(16)}
             contentContainerStyle={{
               alignItems: 'center',
-              paddingVertical: getW(30),
+              paddingTop: getW(16),
+              paddingBottom: getW(30),
             }}
             dataList={dangerItemList}
             keyExtractor={(item, index) => item.foodName}
             renderItem={({item, index}) => {
-              const {foodName} = item;
+              const {foodName, addDate, expireDate} = item;
+              const dday = CALCS.getDDay({inputDate: addDate, expireDate});
+              const ddayText = dday <= 0 ? '오늘까지' : `${dday}일 남음`;
               const {cate} = FOODS[foodName];
               return (
                 <PressNavigate
+                  horizon
                   routeName={'ItemDetail'}
                   extraParam={{foodName}}
                   style={{
-                    width: getW(60),
-                    height: getW(60),
+                    width: getW(113),
+                    height: getW(43),
                     borderRadius: getW(15),
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -160,7 +196,12 @@ export const HomeTPLs = {
                       marginBottom: getW(6),
                     }}
                   />
-                  <Text style={[font.semi12]}>{foodName}</Text>
+
+                  <Text
+                    style={[
+                      font.semi12,
+                      {marginLeft: getW(10)},
+                    ]}>{`${foodName}\n${ddayText}`}</Text>
                 </PressNavigate>
               );
             }}
@@ -173,20 +214,24 @@ export const HomeTPLs = {
           style={{
             width: '100%',
             height: getW(100),
-            backgroundColor: 'gray',
             alignItems: 'center',
           }}>
-          <Text>no trashes</Text>
+          {/* <Text>no trashes</Text> */}
         </View>
       );
     }
   },
   renderMyItem: ({cateItem, style}) => {
     const {cate, foods} = cateItem;
-
+    const sortedVals = Object.values(foods).sort((a, b) => a.dday - b.dday);
     return (
       <View style={style}>
-        <Horizon style={{alignItems: 'center', marginBottom: getW(7)}}>
+        <Horizon
+          style={{
+            alignItems: 'center',
+            marginBottom: getW(7),
+            marginLeft: getW(24),
+          }}>
           <Image_local
             source={FD_CATE_IMG[cate]}
             style={{
@@ -199,16 +244,15 @@ export const HomeTPLs = {
         </Horizon>
         <View
           style={{
-            paddingHorizontal: getW(12),
-            paddingVertical: getW(13),
+            paddingHorizontal: getW(30),
+            paddingVertical: getW(10),
             backgroundColor: 'white',
-            borderRadius: getW(15),
             ...SHADOW.homeCard,
           }}>
-          {foods.map((foodInfo, index) => (
+          {sortedVals.map((foodInfo, index) => (
             <View>
               <Atoms.foodLabel foodObj={foodInfo} />
-              {foods.length - 1 !== index ? (
+              {sortedVals.length - 1 !== index ? (
                 <View
                   style={{width: '100%', height: 1, backgroundColor: '#F1F3F5'}}
                 />
@@ -219,4 +263,33 @@ export const HomeTPLs = {
       </View>
     );
   },
+  renderInfoodList: ({foodList, style}) => (
+    <View
+      style={{
+        paddingHorizontal: getW(30),
+        paddingVertical: getW(10),
+        backgroundColor: 'white',
+        ...SHADOW.homeCard,
+        ...style,
+      }}>
+      {foodList.map((foodInfo, index) => (
+        <View>
+          <Atoms.foodLabel
+            foodObj={{
+              ...foodInfo,
+              dday: CALCS.getDDay({
+                inputDate: foodInfo.addDate,
+                expireDate: foodInfo.expireDate,
+              }),
+            }}
+          />
+          {foodList.length - 1 !== index ? (
+            <View
+              style={{width: '100%', height: 1, backgroundColor: '#F1F3F5'}}
+            />
+          ) : null}
+        </View>
+      ))}
+    </View>
+  ),
 };
