@@ -28,7 +28,7 @@ export function pairsToFlat(pairList) {
 
 export function getDateString(dateObj, option = 'default') {
   const year = String(dateObj.getFullYear());
-  let month = String(dateObj.getMonth());
+  let month = String(dateObj.getMonth() + 1);
   if (month.length === 1) {
     month = '0' + month;
   }

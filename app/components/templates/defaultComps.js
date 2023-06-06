@@ -338,7 +338,7 @@ export const View_BottomModal = ({
   ...rest
 }) => {
   return (
-    <PressGoBack style={{flex: 1}}>
+    <PressGoBack onPress={() => console.log('hello')} style={{flex: 1}}>
       <View
         style={{
           position: 'absolute',
@@ -368,15 +368,17 @@ export const View_BottomModal = ({
 };
 
 export const View_CenterModal = ({style = {}, ...props}) => (
-  <View
-    style={{
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      ...style,
-    }}>
-    {props.children}
-  </View>
+  <PressGoBack onPress={() => console.log('hello')} style={{flex: 1}}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...style,
+      }}>
+      <PressCallback>{props.children}</PressCallback>
+    </View>
+  </PressGoBack>
 );
 
 export const HorizonSpaceBetween = props => (

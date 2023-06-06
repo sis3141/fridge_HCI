@@ -3,6 +3,7 @@ import {View, Text, TextInput} from 'react-native';
 
 import AppNavigationContainer from '@navigationConfigs/AppNavigationContainer';
 import {CreateUserDataContext} from '@hooks/userDataContext';
+import {FOOD_LIST} from '@_constants/testData';
 Text.defaultProps = {
   ...(Text.defaultProps || {}),
   allowFontScaling: false,
@@ -14,7 +15,13 @@ TextInput.defaultProps = {
 
 function App() {
   const [serviceInitial, setServiceInitial] = useState({ready: true});
-
+  console.log(
+    'new data ',
+    FOOD_LIST.map(origin => ({
+      ...origin,
+      id: origin.foodName + origin.addDate,
+    })),
+  );
   if (serviceInitial.ready) {
     return (
       <CreateUserDataContext>

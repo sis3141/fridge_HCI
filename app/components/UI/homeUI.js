@@ -29,9 +29,10 @@ const Atoms = {
       />
     </PressNavigate>
   ),
-  add: ({style}) => (
+  add: ({style, foodId}) => (
     <PressNavigate
       routeName={'ItemAdd'}
+      extraParam={{foodId}}
       style={{
         borderRadius: getW(40),
         backgroundColor: 'white',
@@ -45,7 +46,15 @@ const Atoms = {
     </PressNavigate>
   ),
   foodLabel: ({foodObj}) => {
-    const {foodName, addDate, amount, expireDate, dday, variants = 0} = foodObj;
+    const {
+      foodName,
+      id,
+      addDate,
+      amount,
+      expireDate,
+      dday,
+      variants = 0,
+    } = foodObj;
     const {unit} = FOODS[foodName];
     const isDanger = CALCS.isDanger({dday});
     const isMultiple = variants > 1;
@@ -53,7 +62,7 @@ const Atoms = {
       <PressNavigate
         horizon
         routeName={isMultiple ? 'ItemList' : 'ItemDetail'}
-        extraParam={isMultiple ? {foodName} : {itemInfo: foodObj}}
+        extraParam={isMultiple ? {foodName} : {foodId: id}}
         style={{
           justifyContent: 'space-between',
           height: getW(30),
@@ -171,7 +180,7 @@ export const HomeTPLs = {
             dataList={dangerItemList}
             keyExtractor={(item, index) => item.foodName}
             renderItem={({item, index}) => {
-              const {foodName, addDate, expireDate} = item;
+              const {foodName, addDate, expireDate, id} = item;
               const dday = CALCS.getDDay({inputDate: addDate, expireDate});
               const ddayText = dday <= 0 ? '오늘까지' : `${dday}일 남음`;
               const {cate} = FOODS[foodName];
@@ -179,7 +188,7 @@ export const HomeTPLs = {
                 <PressNavigate
                   horizon
                   routeName={'ItemDetail'}
-                  extraParam={{foodName}}
+                  extraParam={{foodId: id}}
                   style={{
                     width: getW(113),
                     height: getW(43),

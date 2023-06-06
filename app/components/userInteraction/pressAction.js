@@ -254,7 +254,7 @@ export const PressAsync = ({
   style,
   children,
   horizon = false,
-  callbackFunction,
+  onPress,
   disableWait = true,
   afterCallback = () => {},
   disable = false,
@@ -274,7 +274,7 @@ export const PressAsync = ({
       disable={(isProcessing && disableWait) || disable}
       onPress={async () => {
         setIsProcessing(true);
-        await callbackFunction();
+        await onPress();
         setIsProcessing(false);
         afterCallback();
       }}>

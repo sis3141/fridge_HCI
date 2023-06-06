@@ -17,7 +17,6 @@ TextInput.defaultProps = {
 
 function App() {
   const [serviceInitial, setServiceInitial] = useState({ready: true});
-
   return (
     <CreateUserDataContext>
       <AppNavigationContainer

@@ -1,5 +1,4 @@
 import React from 'react';
-import CenterModal from '@routes/modal/CenterModal';
 import {IS_THICK, REAL_WIDTH, WINDOW_WIDTH} from '@constants/appUnits';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
@@ -11,6 +10,7 @@ import Search from '@routes/normal/Search';
 import ItemDetail from '@routes/normal/ItemDetail';
 import ItemList from '@routes/normal/ItemList';
 import ItemAdd from '@routes/modal/ItemAdd';
+import CalendarPage from '@routes/modal/CalandarPage';
 // import createStackNavigator from '@navigators/createStackNavigator';
 // import {createMyStack} from './MyStackNavigator';
 
@@ -48,11 +48,9 @@ function RootStackNavigator({splashOptions = {}}) {
       <Stack.Group screenOptions={{...TransitionOptions.BOTTOM_MODAL}}>
         <Stack.Screen name="ItemAdd" component={ItemAdd} />
       </Stack.Group>
-      <Stack.Screen
-        name="CenterModal"
-        component={CenterModal}
-        options={{...TransitionOptions.CENTER_MODAL}}
-      />
+      <Stack.Group screenOptions={{...TransitionOptions.CENTER_MODAL}}>
+        <Stack.Screen name="CalendarPage" component={CalendarPage} />
+      </Stack.Group>
     </Stack.Navigator>
   );
 }

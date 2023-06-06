@@ -60,7 +60,7 @@ const AdjustAmount = ({
         onPress={
           isEdit
             ? () => getNewAmount(Math.max(curAmount - 1, 0))
-            : () => _navigate('ItemAdd', {itemInfo})
+            : () => _navigate('ItemAdd', {foodId: itemInfo.id})
         }>
         <Text style={[font.semi26, {color: COLORS.green}]}>{'-'}</Text>
       </PressCallback>
@@ -80,7 +80,7 @@ const AdjustAmount = ({
         onPress={
           isEdit
             ? () => getNewAmount(curAmount + 1)
-            : () => _navigate('ItemAdd', {itemInfo})
+            : () => _navigate('ItemAdd', {foodId: itemInfo.id})
         }>
         <Text style={[font.semi26, {color: COLORS.green}]}>{'+'}</Text>
       </PressCallback>
@@ -89,16 +89,16 @@ const AdjustAmount = ({
 };
 
 const Atoms = {
-  edit: ({style, foodInfo}) => (
-    <PressNavigate style={style} routeName={'ItemAdd'} extraParam={{foodInfo}}>
+  edit: ({style, foodId}) => (
+    <PressNavigate style={style} routeName={'ItemAdd'} extraParam={{foodId}}>
       <Image_local
         source={COMMON_IC.edit}
         style={{width: getW(24), height: getW(24)}}
       />
     </PressNavigate>
   ),
-  delete: ({style, foodInfo}) => (
-    <PressNavigate style={style} routeName={'ItemAdd'} extraParam={{foodInfo}}>
+  delete: ({style, foodId}) => (
+    <PressNavigate style={style} routeName={'ItemAdd'} extraParam={{foodId}}>
       <Image_local
         source={COMMON_IC.delete}
         style={{width: getW(24), height: getW(24)}}
@@ -145,8 +145,8 @@ export const DetailTPL = {
       </Horizon>
       <Horizon
         style={{flex: 1, marginRight: getW(16), justifyContent: 'flex-end'}}>
-        <Atoms.edit style={{marginRight: getW(10)}} foodInfo={foodInfo} />
-        <Atoms.delete foodInfo={foodInfo} />
+        <Atoms.edit style={{marginRight: getW(10)}} foodId={foodInfo.id} />
+        <Atoms.delete foodId={foodInfo.id} />
       </Horizon>
     </Horizon>
   ),
@@ -196,6 +196,7 @@ export const DetailTPL = {
           <Desc>수량</Desc>
           <BigDesc style={{marginLeft: getW(88)}}>{amount}</BigDesc>
           <AdjustAmount
+            curAmount={amount}
             getNewAmount={editAmount}
             style={{marginLeft: getW(87)}}
             itemInfo={foodInfo}
@@ -203,11 +204,26 @@ export const DetailTPL = {
           />
         </Horizon>
         <Bar />
-        <Horizon style={ST.descCard} id="소비기한">
-          <Desc>소비기한</Desc>
-          <BigDesc style={{marginLeft: getW(18)}}>
-            {getDateString(new Date(expireDate)) + ' 까지'}
-          </BigDesc>
+        <Horizon
+          style={{...ST.descCard, justifyContent: 'space-between'}}
+          id="소비기한">
+          <Horizon style={{alignItems: 'center'}}>
+            <Desc>소비기한</Desc>
+            <BigDesc style={{marginLeft: getW(18)}}>
+              {getDateString(new Date(expireDate)) + ' 까지'}
+            </BigDesc>
+          </Horizon>
+          {isEdit ? (
+            <PressNavigate
+              routeName={'CalendarPage'}
+              extraParam={{onDaySelect: editExpireDate}}>
+              <Image_local
+                tint={'#E6E8E9'}
+                source={COMMON_IC.rightArrow}
+                style={{width: getW(32), height: getW(32)}}
+              />
+            </PressNavigate>
+          ) : null}
         </Horizon>
         <Bar />
         <Horizon style={ST.descCard} id="메모">
@@ -221,7 +237,7 @@ export const DetailTPL = {
 const ST = StyleSheet.create({
   descCard: {
     paddingHorizontal: getW(23),
-    paddingVertical: getW(22),
+    height: getW(63),
     alignItems: 'center',
   },
 });

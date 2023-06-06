@@ -25,28 +25,34 @@ const LocalStorage = {
     await saveList(newList);
     return newList;
   },
-  editFood: async ({foodName, newObj}) => {
+  editFood: async ({foodId, newObj}) => {
     const lastList = await getlastList();
+    console.log('cur last list ?? ', lastList);
     const newList = lastList.map(foodObj => {
-      const {foodName: lastFoodName} = foodObj;
-      if (lastFoodName === foodName) {
+      const {id: lastId} = foodObj;
+      if (lastId === foodId) {
         return newObj;
       } else {
         return foodObj;
       }
     });
+    console.log('edit in new list ??', newList);
     await saveList(newList);
     return newList;
   },
-  deleteFood: async ({foodName}) => {
+  deleteFood: async ({foodId}) => {
     const lastList = await getlastList();
-    const newList = lastList.filter(foodObj => foodObj.foodName !== foodName);
+    const newList = lastList.filter(foodObj => foodObj.id !== foodId);
     await saveList(newList);
     return newList;
   },
   getFoodList: async () => {
     const lastList = await getlastList();
     return lastList;
+  },
+  save: async ({foodList}) => {
+    await saveList(foodList);
+    return foodList;
   },
 };
 export default LocalStorage;

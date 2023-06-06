@@ -8,6 +8,7 @@ import {CALCS} from './foodCalc';
 import {logNow} from '@_utils/debug';
 import LocalStorage from './asyncStorage';
 import {FOOD_LIST} from '@_constants/testData';
+import {isExist} from '@_utils/validation';
 
 const IS_TEST = true;
 
@@ -54,16 +55,29 @@ export function CreateUserDataContext(props) {
     update: newList => {
       dispatch({type: 'UPDATE', newList});
     },
+    add: async ({foodObj}) => {
+      const newList = await LocalStorage.addFood({foodObj});
+      actions.update(newList);
+    },
+    edit: async ({foodId, newObj}) => {
+      const newList = await LocalStorage.editFood({foodId, newObj});
+      console.log('😊😊new list after update : ', newList);
+      actions.update(newList);
+    },
+    delete: async ({foodId}) => {
+      const newList = await LocalStorage.deleteFood({foodId});
+      actions.update(newList);
+    },
   }));
 
   async function initUser() {
     try {
       let lastList = [];
       if (IS_TEST) {
-        lastList = FOOD_LIST;
-      } else {
-        lastList = await LocalStorage.getFoodList();
+        await LocalStorage.save({foodList: FOOD_LIST});
       }
+      lastList = await LocalStorage.getFoodList();
+
       console.log('got last list : ', lastList);
       actions.update(lastList);
     } catch (error) {
@@ -73,9 +87,17 @@ export function CreateUserDataContext(props) {
   useEffect(() => {
     initUser();
   }, []);
+  const getFoodWithId = ({foodId}) => {
+    const resList = state.foodList.filter(foodObj => foodObj.id === foodId);
+    if (isExist(resList)) {
+      return resList[0];
+    } else {
+      return null;
+    }
+  };
 
   return (
-    <UserDataContext.Provider value={{...state, ...actions}}>
+    <UserDataContext.Provider value={{...state, ...actions, getFoodWithId}}>
       {props.children}
     </UserDataContext.Provider>
   );
