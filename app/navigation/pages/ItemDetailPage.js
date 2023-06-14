@@ -1,7 +1,7 @@
 import {DetailTPL} from '@UI/detailUI';
 import {FOODS} from '@_constants/dataConfig';
 import {getDateString} from '@_utils/converters';
-import {isEmpty} from '@_utils/validation';
+import {isEmpty, isExist} from '@_utils/validation';
 import {Horizon} from '@components/templates/defaultComps';
 import {getW} from '@constants/appUnits';
 import {CALCS} from '@hooks/foodCalc';
@@ -16,13 +16,14 @@ import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 function ItemDetailPage({headerHeight, foodId}) {
-  const {getFoodWithId} = useContext(UserDataContext);
+  const {getFoodWithId, inited} = useContext(UserDataContext);
   const [itemInfo, setItemInfo] = useState({});
   const {_goBack} = _useNavFunctions();
   const isFocused = useIsFocused();
   useEffect(() => {
-    if (isFocused) {
+    if (isFocused && inited) {
       const newFoodObj = getFoodWithId({foodId});
+      console.log('new food obj : ', foodId, newFoodObj);
       if (isEmpty(newFoodObj)) {
         console.log('no!', newFoodObj);
         _goBack();
@@ -31,8 +32,8 @@ function ItemDetailPage({headerHeight, foodId}) {
         setItemInfo(newFoodObj);
       }
     }
-  }, [isFocused]);
-  if (isEmpty(itemInfo)) {
+  }, [isFocused, inited]);
+  if (!(isExist(itemInfo) && inited)) {
     return <View />;
   } else {
     const {foodName, addDate, expireDate, amount} = itemInfo;
@@ -48,7 +49,12 @@ function ItemDetailPage({headerHeight, foodId}) {
         <Text
           style={[
             font.semi32,
-            {color: indiColor, alignSelf: 'center', marginTop: getW(15)},
+            {
+              color: indiColor,
+              alignSelf: 'center',
+              marginTop: getW(15),
+              marginBottom: getW(12),
+            },
           ]}>
           {`D-Day${dday <= 0 ? '' : ' ' + dday}`}
         </Text>

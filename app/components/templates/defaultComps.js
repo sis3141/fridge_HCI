@@ -349,6 +349,8 @@ export const View_BottomModal = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-end',
+          backdropFilter: 'blur(5px)',
+
           ...style,
         }}>
         <PressCallback
@@ -374,6 +376,7 @@ export const View_CenterModal = ({style = {}, ...props}) => (
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backdropFilter: 'blur(5px)',
         ...style,
       }}>
       <PressCallback>{props.children}</PressCallback>

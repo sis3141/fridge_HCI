@@ -64,5 +64,10 @@ const font = {
     fontSize: getW(14),
     color: 'black',
   },
+  med14: {
+    ...medium,
+    fontSize: getW(14),
+    color: 'black',
+  },
 };
 export default font;

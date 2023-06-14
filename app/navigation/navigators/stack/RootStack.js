@@ -35,7 +35,11 @@ function RootStackNavigator({splashOptions = {}}) {
           component={Home}
           options={{...getEmptyHeader()}}
         />
-        <Stack.Screen name="Search" component={Search} />
+        <Stack.Screen
+          name="Search"
+          component={Search}
+          options={{...getEmptyHeader()}}
+        />
         <Stack.Screen
           name="ItemList"
           component={ItemList}
@@ -50,10 +54,10 @@ function RootStackNavigator({splashOptions = {}}) {
       <Stack.Group screenOptions={{...TransitionOptions.BOTTOM_MODAL}}>
         <Stack.Screen name="ItemAdd" component={ItemAdd} />
         <Stack.Screen name="DeleteConfirm" component={DeleteConfirm} />
+        <Stack.Screen name="CategorySelecter" component={CategorySelecter} />
       </Stack.Group>
       <Stack.Group screenOptions={{...TransitionOptions.CENTER_MODAL}}>
         <Stack.Screen name="CalendarPage" component={CalendarPage} />
-        <Stack.Screen name="CategorySelecter" component={CategorySelecter} />
       </Stack.Group>
     </Stack.Navigator>
   );

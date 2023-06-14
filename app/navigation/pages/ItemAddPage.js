@@ -8,7 +8,7 @@ import font from '@styles/textStyle';
 import {PressAsync} from '@userInteraction/pressAction';
 import React, {useContext, useState} from 'react';
 import {Text, View} from 'react-native';
-const Handle = ({style}) => (
+export const Handle = ({style}) => (
   <View
     style={{
       width: getW(56),
@@ -23,7 +23,7 @@ const Handle = ({style}) => (
 function ItemAddPage({
   headerHeight,
   foodId = null,
-  isView = true,
+  isView = false,
   isAdding = false,
 }) {
   const {getFoodWithId, edit, add} = useContext(UserDataContext);
@@ -60,6 +60,9 @@ function ItemAddPage({
   const editCategory = foodName => {
     setNewInfo(prev => ({...prev, foodName}));
   };
+  const editMemo = memo => {
+    setNewInfo(prev => ({...prev, memo}));
+  };
 
   if (isEmpty(newInfo) && !isAdding) {
     return <View />;
@@ -75,6 +78,7 @@ function ItemAddPage({
             editAmount={editAmount}
             editExpireDate={editExpireDate}
             editCategory={editCategory}
+            editMemo={editMemo}
           />
         </View>
         <PressAsync

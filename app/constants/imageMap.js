@@ -1,10 +1,13 @@
 export const COMMON_IC = {
   add: require('@icons/add.png'),
   search: require('@icons/search.png'),
+  searchBar: require('@icons/searchBar.png'),
   fridge: require('@icons/fridge.png'),
   rightArrow: require('@icons/rightArrow.png'),
   edit: require('@icons/edit.png'),
   delete: require('@icons/delete.png'),
+  minus: require('@icons/minus.png'),
+  plus: require('@icons/plus.png'),
 };
 export const FD_CATE_IMG = {
   유제품: require('@icons/milk.png'),

@@ -11,8 +11,8 @@ import {UserDataContext} from '@hooks/userDataContext';
 function DeleteConfirm() {
   const route = useRoute();
   const {_getCurParam, _goBack} = _useNavFunctions();
-  const {foodId} = _getCurParam();
-  const {deleteFood} = useContext(UserDataContext);
+  const {foodId, isMultiple = false} = _getCurParam();
+  const {deleteFood, deleteMultiple} = useContext(UserDataContext);
 
   return (
     <View_BottomModal>
@@ -32,7 +32,9 @@ function DeleteConfirm() {
             backgroundColor: 'black',
           }}
           onPress={async () => {
-            await deleteFood({foodId});
+            isMultiple
+              ? await deleteMultiple({foodIds: foodId})
+              : await deleteFood({foodId});
             _goBack();
           }}>
           <Text style={[font.semi20, {color: 'white'}]}>확인</Text>

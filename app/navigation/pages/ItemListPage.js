@@ -7,31 +7,36 @@ import React, {useContext} from 'react';
 import {View} from 'react-native';
 
 function ItemListPage({headerHeight, foodName}) {
-  const {foodList} = useContext(UserDataContext);
-  const targetList = foodList
-    .filter(value => value.foodName === foodName)
-    .sort((a, b) => a.expireDate - b.expireDate);
-  const length = targetList.length;
-  return (
-    <FlatList_P
-      style={{backgroundColor: 'white'}}
-      ListHeaderComponent={
-        <View>
-          <HomeTPLs.listHeader
-            foodName={foodName}
-            cate={FOODS[foodName].cate}
-          />
-        </View>
-      }
-      data={[targetList]}
-      renderItem={({item, index}) =>
-        HomeTPLs.renderInfoodList({
-          foodList: item,
-          style: {marginTop: getW(30)},
-        })
-      }
-    />
-  );
+  const {inited, foodList} = useContext(UserDataContext);
+  if (inited) {
+    const targetList = foodList
+      .filter(value => value.foodName === foodName)
+      .sort((a, b) => a.expireDate - b.expireDate);
+    const length = targetList.length;
+
+    return (
+      <FlatList_P
+        style={{backgroundColor: 'white'}}
+        ListHeaderComponent={
+          <View>
+            <HomeTPLs.listHeader
+              foodName={foodName}
+              cate={FOODS[foodName].cate}
+            />
+          </View>
+        }
+        data={[targetList]}
+        renderItem={({item, index}) =>
+          HomeTPLs.renderInfoodList({
+            foodList: item,
+            style: {marginTop: getW(30)},
+          })
+        }
+      />
+    );
+  } else {
+    return <View />;
+  }
 }
 
 export default ItemListPage;

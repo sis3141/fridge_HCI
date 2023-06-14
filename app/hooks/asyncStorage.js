@@ -49,6 +49,12 @@ const LocalStorage = {
     await saveList(newList);
     return newList;
   },
+  deleteMultiple: async ({foodIds}) => {
+    const lastList = await getlastList();
+    const newList = lastList.filter(foodObj => !foodIds.includes(foodObj.id));
+    await saveList(newList);
+    return newList;
+  },
   getFoodList: async () => {
     const lastList = await getlastList();
     return lastList;

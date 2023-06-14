@@ -28,7 +28,12 @@ function HomePage({headerHeight}) {
         };
       }
       if (isEmpty(cateDict[cate].foods[foodName])) {
-        cateDict[cate].foods[foodName] = {dday, variants: 1, ...foodObj};
+        cateDict[cate].foods[foodName] = {
+          dday,
+          variants: 1,
+          foodIds: [foodObj.id],
+          ...foodObj,
+        };
       } else {
         let curFood = cateDict[cate].foods[foodName];
         if (curFood.dday > dday) {
@@ -36,6 +41,7 @@ function HomePage({headerHeight}) {
         }
         curFood.amount += amount;
         curFood.variants++;
+        curFood.foodIds.push(foodObj.id);
       }
 
       return {cateDict};
@@ -68,7 +74,7 @@ function HomePage({headerHeight}) {
             justifyContent: 'center',
           }}>
           <Text style={[font.semi26, {color: COLORS.gray94}]}>
-            냉장고안에 아무것도 없네요
+            냉장고안에 아무것도 없네요..!
           </Text>
         </View>
       }

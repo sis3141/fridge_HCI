@@ -8,6 +8,7 @@ import {COMMON_IC, FD_CATE_IMG} from '@constants/imageMap';
 import {CALCS} from '@hooks/foodCalc';
 import {_useNavFunctions} from '@hooks/navigationHook';
 import {Image_local} from '@platformPackage/Image';
+import {TextInput_P} from '@platformPackage/gestureComponent';
 import COLORS from '@styles/colors';
 import font from '@styles/textStyle';
 import {
@@ -27,12 +28,19 @@ const BigDesc = ({style, children}) => (
 const Bar = () => (
   <View
     style={{
-      width: getW(344),
+      width: '100%',
       height: getW(1),
+
       backgroundColor: '#e6e8e9',
       alignSelf: 'center',
     }}
   />
+);
+
+const EditWrapper = ({children, foodId, style}) => (
+  <PressNavigate routeName={'ItemAdd'} style={style} extraParam={{foodId}}>
+    {children}
+  </PressNavigate>
 );
 
 const AdjustAmount = ({
@@ -63,7 +71,11 @@ const AdjustAmount = ({
             ? () => _navigate('ItemAdd', {foodId: itemInfo.id})
             : () => getNewAmount(Math.max(curAmount - 1, 1))
         }>
-        <Text style={[font.semi26, {color: COLORS.green}]}>{'-'}</Text>
+        <Image_local
+          tint={COLORS.green}
+          source={COMMON_IC.minus}
+          style={{width: getW(16), height: getW(16)}}
+        />
       </PressCallback>
       <View
         style={{
@@ -83,7 +95,11 @@ const AdjustAmount = ({
             ? () => _navigate('ItemAdd', {foodId: itemInfo.id})
             : () => getNewAmount(curAmount + 1)
         }>
-        <Text style={[font.semi26, {color: COLORS.green}]}>{'+'}</Text>
+        <Image_local
+          tint={COLORS.green}
+          source={COMMON_IC.plus}
+          style={{width: getW(16), height: getW(16)}}
+        />
       </PressCallback>
     </Horizon>
   );
@@ -163,25 +179,34 @@ export const DetailTPL = {
     editAmount = DoNothing,
     editExpireDate = DoNothing,
     editCategory = DoNothing,
+    editMemo = DoNothing,
   }) => {
-    const {foodName, addDate, expireDate, amount} = foodInfo;
+    const {foodName, addDate, expireDate, amount, memo} = foodInfo;
     const {cate} = FOODS[foodName] ?? {};
     const dday = CALCS.getDDay({expireDate});
     const fullRange = CALCS.getFullRange({addDate, expireDate});
     const isDanger = CALCS.isDanger({dday});
     return (
-      <View>
-        <Horizon
+      <View
+        style={{
+          paddingHorizontal: getW(23),
+        }}>
+        <PressNavigate
+          horizon
           style={{
             ...ST.descCard,
             justifyContent: 'space-between',
           }}
-          id="카테고리">
+          routeName={isView ? 'ItemAdd' : 'CategorySelecter'}
+          extraParam={
+            isView ? {foodId: foodInfo.id} : {onCateSelect: editCategory}
+          }>
           <Horizon
             style={{
               alignItems: 'center',
             }}>
             <Desc>카테고리</Desc>
+
             <View
               style={{
                 marginLeft: getW(20),
@@ -203,23 +228,22 @@ export const DetailTPL = {
             <Image_local
               source={COMMON_IC.rightArrow}
               tint={'#f1f3f5'}
-              style={{width: getW(24), height: getW(24), marginLeft: getW(30)}}
+              style={{
+                width: getW(24),
+                height: getW(24),
+                marginLeft: getW(30),
+              }}
             />
             <BigDesc style={{marginLeft: getW(15)}}>{foodName}</BigDesc>
           </Horizon>
-
-          <PressNavigate
-            routeName={isView ? 'ItemAdd' : 'CategorySelecter'}
-            extraParam={
-              isView ? {foodId: foodInfo.id} : {onCateSelect: editCategory}
-            }>
+          {!isView ? (
             <Image_local
               tint={'#E6E8E9'}
               source={COMMON_IC.rightArrow}
               style={{width: getW(32), height: getW(32)}}
             />
-          </PressNavigate>
-        </Horizon>
+          ) : null}
+        </PressNavigate>
         <Bar />
         <Horizon style={ST.descCard} id="수량">
           <Desc>수량</Desc>
@@ -239,36 +263,82 @@ export const DetailTPL = {
           <Horizon style={{alignItems: 'center'}}>
             <Desc>소비기한</Desc>
             {isEmpty(expireDate) ? (
-              <Text
-                style={[
-                  font.semi12,
-                  {color: COLORS.grayA6, marginLeft: getW(32)},
-                ]}>
-                날짜를 선택해 주세요
-              </Text>
+              <EditWrapper foodId={foodInfo.id}>
+                <Text
+                  style={[
+                    font.semi12,
+                    {color: COLORS.grayA6, marginLeft: getW(32)},
+                  ]}>
+                  날짜를 선택해 주세요
+                </Text>
+              </EditWrapper>
             ) : (
               <BigDesc style={{marginLeft: getW(18)}}>
                 {getDateString(new Date(expireDate)) + ' 까지'}
               </BigDesc>
             )}
           </Horizon>
-
-          <PressNavigate
-            routeName={isView ? 'ItemAdd' : 'CalendarPage'}
-            extraParam={
-              isView ? {foodId: foodInfo.id} : {onDaySelect: editExpireDate}
-            }>
-            <Image_local
-              tint={'#E6E8E9'}
-              source={COMMON_IC.rightArrow}
-              style={{width: getW(32), height: getW(32)}}
-            />
-          </PressNavigate>
+          {!isView ? (
+            <PressNavigate
+              routeName={isView ? 'ItemAdd' : 'CalendarPage'}
+              extraParam={
+                isView ? {foodId: foodInfo.id} : {onDaySelect: editExpireDate}
+              }>
+              <Image_local
+                tint={'#E6E8E9'}
+                source={COMMON_IC.rightArrow}
+                style={{width: getW(32), height: getW(32)}}
+              />
+            </PressNavigate>
+          ) : null}
         </Horizon>
         <Bar />
-        <Horizon style={ST.descCard} id="메모">
-          <Desc>메모</Desc>
+        <Horizon
+          style={{
+            ...ST.descCard,
+            height: null,
+            minHeight: getW(64),
+            paddingVertical: getW(10),
+          }}
+          id="메모">
+          <Desc style={{marginRight: getW(46)}}>메모</Desc>
+          {isView ? (
+            <EditWrapper style={{flex: 1}} foodId={foodInfo.id}>
+              <Text
+                style={[
+                  font.semi16,
+                  {
+                    color: COLORS.gray94,
+                    lineHeight: getW(20),
+                  },
+                ]}>
+                {memo}
+              </Text>
+            </EditWrapper>
+          ) : (
+            <TextInput_P
+              maxLength={60}
+              style={{
+                flex: 1,
+                height: getW(100),
+                backgroundColor: '#f0f0f0',
+                padding: getW(10),
+                borderRadius: getW(8),
+                marginVertical: getW(10),
+                lineHeight: getW(20),
+                ...font.semi16,
+                color: COLORS.gray94,
+              }}
+              multiline
+              defaultValue={memo}
+              editable={!isView}
+              onChangeText={text => {
+                editMemo(text);
+              }}
+            />
+          )}
         </Horizon>
+        <Bar />
       </View>
     );
   },
@@ -276,7 +346,6 @@ export const DetailTPL = {
 
 const ST = StyleSheet.create({
   descCard: {
-    paddingHorizontal: getW(23),
     height: getW(63),
     alignItems: 'center',
   },

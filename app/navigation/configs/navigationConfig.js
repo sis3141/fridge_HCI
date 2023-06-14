@@ -20,9 +20,7 @@ export const navigationConfig = {
   },
   Home: {
     paths: {},
-    linkConfig: {
-      path: 'home',
-    },
+    linkConfig: {},
   },
   Search: {
     paths: {},
@@ -34,18 +32,27 @@ export const navigationConfig = {
     paths: {},
     linkConfig: {
       path: 'item-detail/:foodId',
+      parse: {
+        foodId: param => decodeURIComponent(param),
+      },
     },
   },
   ItemList: {
     paths: {},
     linkConfig: {
       path: 'items/:foodName',
+      parse: {
+        foodName: param => decodeURIComponent(param),
+      },
     },
   },
   ItemAdd: {
     paths: {},
     linkConfig: {
       path: 'edit-food/:foodId',
+      parse: {
+        foodId: param => decodeURIComponent(param),
+      },
     },
   },
   CalendarPage: {

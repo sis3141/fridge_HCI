@@ -73,6 +73,10 @@ export function CreateUserDataContext(props) {
       const newList = await LocalStorage.deleteFood({foodId});
       actions.update(newList);
     },
+    deleteMultiple: async ({foodIds}) => {
+      const newList = await LocalStorage.deleteMultiple({foodIds});
+      actions.update(newList);
+    },
     getTestData: async () => {
       await LocalStorage.save({foodList: FOOD_LIST});
       actions.update(FOOD_LIST);
