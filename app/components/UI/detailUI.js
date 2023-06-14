@@ -1,7 +1,7 @@
 import {FOODS} from '@_constants/dataConfig';
 import {getDateString} from '@_utils/converters';
 import {DoNothing} from '@_utils/handling';
-import {isEmpty} from '@_utils/validation';
+import {isEmpty, isExist} from '@_utils/validation';
 import {Horizon} from '@components/templates/defaultComps';
 import {getW} from '@constants/appUnits';
 import {COMMON_IC, FD_CATE_IMG} from '@constants/imageMap';
@@ -44,8 +44,10 @@ const EditWrapper = ({children, foodId, style}) => (
 );
 
 const AdjustAmount = ({
+  disable,
   curAmount,
   getNewAmount = DoNothing,
+  unitAmount = 1,
   isView = false,
   itemInfo,
   style,
@@ -69,7 +71,7 @@ const AdjustAmount = ({
         onPress={
           isView
             ? () => _navigate('ItemAdd', {foodId: itemInfo.id})
-            : () => getNewAmount(Math.max(curAmount - 1, 1))
+            : () => getNewAmount(Math.max(curAmount - unitAmount, 1))
         }>
         <Image_local
           tint={COLORS.green}
@@ -93,7 +95,7 @@ const AdjustAmount = ({
         onPress={
           isView
             ? () => _navigate('ItemAdd', {foodId: itemInfo.id})
-            : () => getNewAmount(curAmount + 1)
+            : () => getNewAmount(curAmount + unitAmount)
         }>
         <Image_local
           tint={COLORS.green}
@@ -182,7 +184,7 @@ export const DetailTPL = {
     editMemo = DoNothing,
   }) => {
     const {foodName, addDate, expireDate, amount, memo} = foodInfo;
-    const {cate} = FOODS[foodName] ?? {};
+    const {cate, unit, unitAmount} = FOODS[foodName] ?? {};
     const dday = CALCS.getDDay({expireDate});
     const fullRange = CALCS.getFullRange({addDate, expireDate});
     const isDanger = CALCS.isDanger({dday});
@@ -245,25 +247,36 @@ export const DetailTPL = {
           ) : null}
         </PressNavigate>
         <Bar />
-        <Horizon style={ST.descCard} id="수량">
-          <Desc>수량</Desc>
-          <BigDesc style={{marginLeft: getW(88)}}>{amount}</BigDesc>
-          <AdjustAmount
-            curAmount={amount}
-            getNewAmount={editAmount}
-            style={{marginLeft: getW(87)}}
-            itemInfo={foodInfo}
-            isView={isView}
-          />
-        </Horizon>
-        <Bar />
+        {isExist(unitAmount) ? (
+          <>
+            <Horizon style={ST.descCard} id="수량">
+              <View style={{width: getW(74)}}>
+                <Desc>{isExist(unit) ? '수량(' + unit + ')' : '수량'}</Desc>
+              </View>
+              <BigDesc style={{marginLeft: getW(40)}}>
+                {amount * unitAmount}
+              </BigDesc>
+              <AdjustAmount
+                disable={isEmpty(unitAmount)}
+                curAmount={amount}
+                getNewAmount={editAmount}
+                style={{marginLeft: getW(87)}}
+                itemInfo={foodInfo}
+                isView={isView}
+              />
+            </Horizon>
+            <Bar />
+          </>
+        ) : null}
         <Horizon
           style={{...ST.descCard, justifyContent: 'space-between'}}
           id="소비기한">
           <Horizon style={{alignItems: 'center'}}>
             <Desc>소비기한</Desc>
             {isEmpty(expireDate) ? (
-              <EditWrapper foodId={foodInfo.id}>
+              <PressNavigate
+                routeName={'CalendarPage'}
+                extraParam={{onDaySelect: editExpireDate}}>
                 <Text
                   style={[
                     font.semi12,
@@ -271,7 +284,7 @@ export const DetailTPL = {
                   ]}>
                   날짜를 선택해 주세요
                 </Text>
-              </EditWrapper>
+              </PressNavigate>
             ) : (
               <BigDesc style={{marginLeft: getW(18)}}>
                 {getDateString(new Date(expireDate)) + ' 까지'}

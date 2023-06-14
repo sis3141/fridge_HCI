@@ -62,8 +62,7 @@ const Atoms = {
       dday,
       variants = 0,
     } = foodObj;
-    const {unit} = FOODS[foodName];
-    console.log('cur foodObj : ', foodObj);
+    const {unit, unitAmount} = FOODS[foodName];
     const isDanger = CALCS.isDanger({dday});
     const isMultiple = variants > 1;
     const swipeRowRef = useRef(null);
@@ -129,7 +128,7 @@ const Atoms = {
               {foodName}
             </Text>
             <Text style={[font.bold16, {color: COLORS.gray94}]}>
-              {amount + unit}
+              {amount * unitAmount + unit}
             </Text>
           </Horizon>
           <Horizon style={{alignItems: 'center'}}>
@@ -333,7 +332,7 @@ export const HomeTPLs = {
         ...style,
       }}>
       {foodList.map((foodInfo, index) => (
-        <View>
+        <View key={foodInfo.id}>
           <Atoms.FoodLabel
             style={{
               paddingVertical: getW(10),

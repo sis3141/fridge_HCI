@@ -22,7 +22,7 @@ function AppNavigationContainer({navContext}) {
         linking={{config: linkConfig}}
         documentTitle={{
           formatter: (options, route) => {
-            return 'myApp - test';
+            return 'FoodRescue';
           },
         }}
         onReady={() => {

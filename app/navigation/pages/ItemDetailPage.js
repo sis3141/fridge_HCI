@@ -36,7 +36,7 @@ function ItemDetailPage({headerHeight, foodId}) {
   if (!(isExist(itemInfo) && inited)) {
     return <View />;
   } else {
-    const {foodName, addDate, expireDate, amount} = itemInfo;
+    const {foodName, addDate, expireDate} = itemInfo;
     const {cate} = FOODS[foodName];
     const dday = CALCS.getDDay({expireDate});
     const fullRange = CALCS.getFullRange({addDate, expireDate});
