@@ -56,7 +56,7 @@ const SearchHeader = ({onKeywordChange}) => {
 const renderItem = ({item}) => {
   const {foodName, id, addDate, expireDate, amount} = item;
   console.log('item : ', item);
-  const {unit, cate} = FOODS[foodName];
+  const {unit, cate, unitAmount} = FOODS[foodName];
   const dday = CALCS.getDDay({expireDate});
   const isDanger = CALCS.isDanger({dday});
   const dangerColor = isDanger ? '#FF7F63' : '#62E38C';
@@ -101,7 +101,7 @@ const renderItem = ({item}) => {
             <Text style={[font.med14, {color: '#38393D'}]}>{foodName}</Text>
           </Horizon>
           <Text style={[font.medium, {fontSize: getW(12), color: '#808186'}]}>
-            {amount + unit}
+            {amount * unitAmount + unit}
           </Text>
         </View>
       </Horizon>
