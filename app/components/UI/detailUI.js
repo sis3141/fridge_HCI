@@ -1,6 +1,7 @@
 import {FOODS} from '@_constants/dataConfig';
 import {getDateString} from '@_utils/converters';
 import {DoNothing} from '@_utils/handling';
+import {isEmpty} from '@_utils/validation';
 import {Horizon} from '@components/templates/defaultComps';
 import {getW} from '@constants/appUnits';
 import {COMMON_IC, FD_CATE_IMG} from '@constants/imageMap';
@@ -37,7 +38,7 @@ const Bar = () => (
 const AdjustAmount = ({
   curAmount,
   getNewAmount = DoNothing,
-  isEdit = false,
+  isView = false,
   itemInfo,
   style,
 }) => {
@@ -58,9 +59,9 @@ const AdjustAmount = ({
           justifyContent: 'center',
         }}
         onPress={
-          isEdit
-            ? () => getNewAmount(Math.max(curAmount - 1, 0))
-            : () => _navigate('ItemAdd', {foodId: itemInfo.id})
+          isView
+            ? () => _navigate('ItemAdd', {foodId: itemInfo.id})
+            : () => getNewAmount(Math.max(curAmount - 1, 1))
         }>
         <Text style={[font.semi26, {color: COLORS.green}]}>{'-'}</Text>
       </PressCallback>
@@ -78,9 +79,9 @@ const AdjustAmount = ({
           justifyContent: 'center',
         }}
         onPress={
-          isEdit
-            ? () => getNewAmount(curAmount + 1)
-            : () => _navigate('ItemAdd', {foodId: itemInfo.id})
+          isView
+            ? () => _navigate('ItemAdd', {foodId: itemInfo.id})
+            : () => getNewAmount(curAmount + 1)
         }>
         <Text style={[font.semi26, {color: COLORS.green}]}>{'+'}</Text>
       </PressCallback>
@@ -97,14 +98,19 @@ const Atoms = {
       />
     </PressNavigate>
   ),
-  delete: ({style, foodId}) => (
-    <PressNavigate style={style} routeName={'ItemAdd'} extraParam={{foodId}}>
-      <Image_local
-        source={COMMON_IC.delete}
-        style={{width: getW(24), height: getW(24)}}
-      />
-    </PressNavigate>
-  ),
+  delete: ({style, foodId}) => {
+    return (
+      <PressNavigate
+        style={style}
+        routeName={'DeleteConfirm'}
+        extraParam={{foodId}}>
+        <Image_local
+          source={COMMON_IC.delete}
+          style={{width: getW(24), height: getW(24)}}
+        />
+      </PressNavigate>
+    );
+  },
 };
 
 export const DetailTPL = {
@@ -151,45 +157,68 @@ export const DetailTPL = {
     </Horizon>
   ),
   detailInfo: ({
-    foodInfo,
-    isEdit = false,
+    foodInfo = {},
+    isView = true,
+    isAdding = false,
     editAmount = DoNothing,
     editExpireDate = DoNothing,
     editCategory = DoNothing,
   }) => {
     const {foodName, addDate, expireDate, amount} = foodInfo;
-    const {cate} = FOODS[foodName];
+    const {cate} = FOODS[foodName] ?? {};
     const dday = CALCS.getDDay({expireDate});
     const fullRange = CALCS.getFullRange({addDate, expireDate});
     const isDanger = CALCS.isDanger({dday});
     return (
       <View>
-        <Horizon style={ST.descCard} id="카테고리">
-          <Desc>카테고리</Desc>
-          <View
+        <Horizon
+          style={{
+            ...ST.descCard,
+            justifyContent: 'space-between',
+          }}
+          id="카테고리">
+          <Horizon
             style={{
-              marginLeft: getW(20),
-              width: getW(18),
-              height: getW(18),
-              backgroundColor: 'rgba(133, 224, 163, 0.5)',
-              opacity: 0.5,
-              borderRadius: getW(18),
               alignItems: 'center',
-              justifyContent: 'center',
             }}>
+            <Desc>카테고리</Desc>
+            <View
+              style={{
+                marginLeft: getW(20),
+                width: getW(18),
+                height: getW(18),
+                backgroundColor: 'rgba(133, 224, 163, 0.5)',
+                opacity: 0.5,
+                borderRadius: getW(18),
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Image_local
+                style={{width: getW(12), height: getW(12)}}
+                source={FD_CATE_IMG[cate]}
+                tint={COLORS.green}
+              />
+            </View>
+            <BigDesc style={{marginLeft: getW(10)}}>{cate}</BigDesc>
             <Image_local
-              style={{width: getW(12), height: getW(12)}}
-              source={FD_CATE_IMG[cate]}
-              tint={COLORS.green}
+              source={COMMON_IC.rightArrow}
+              tint={'#f1f3f5'}
+              style={{width: getW(24), height: getW(24), marginLeft: getW(30)}}
             />
-          </View>
-          <BigDesc style={{marginLeft: getW(10)}}>{cate}</BigDesc>
-          <Image_local
-            source={COMMON_IC.rightArrow}
-            tint={'#f1f3f5'}
-            style={{width: getW(24), height: getW(24), marginLeft: getW(30)}}
-          />
-          <BigDesc style={{marginLeft: getW(15)}}>{foodName}</BigDesc>
+            <BigDesc style={{marginLeft: getW(15)}}>{foodName}</BigDesc>
+          </Horizon>
+
+          <PressNavigate
+            routeName={isView ? 'ItemAdd' : 'CategorySelecter'}
+            extraParam={
+              isView ? {foodId: foodInfo.id} : {onCateSelect: editCategory}
+            }>
+            <Image_local
+              tint={'#E6E8E9'}
+              source={COMMON_IC.rightArrow}
+              style={{width: getW(32), height: getW(32)}}
+            />
+          </PressNavigate>
         </Horizon>
         <Bar />
         <Horizon style={ST.descCard} id="수량">
@@ -200,7 +229,7 @@ export const DetailTPL = {
             getNewAmount={editAmount}
             style={{marginLeft: getW(87)}}
             itemInfo={foodInfo}
-            isEdit={isEdit}
+            isView={isView}
           />
         </Horizon>
         <Bar />
@@ -209,21 +238,32 @@ export const DetailTPL = {
           id="소비기한">
           <Horizon style={{alignItems: 'center'}}>
             <Desc>소비기한</Desc>
-            <BigDesc style={{marginLeft: getW(18)}}>
-              {getDateString(new Date(expireDate)) + ' 까지'}
-            </BigDesc>
+            {isEmpty(expireDate) ? (
+              <Text
+                style={[
+                  font.semi12,
+                  {color: COLORS.grayA6, marginLeft: getW(32)},
+                ]}>
+                날짜를 선택해 주세요
+              </Text>
+            ) : (
+              <BigDesc style={{marginLeft: getW(18)}}>
+                {getDateString(new Date(expireDate)) + ' 까지'}
+              </BigDesc>
+            )}
           </Horizon>
-          {isEdit ? (
-            <PressNavigate
-              routeName={'CalendarPage'}
-              extraParam={{onDaySelect: editExpireDate}}>
-              <Image_local
-                tint={'#E6E8E9'}
-                source={COMMON_IC.rightArrow}
-                style={{width: getW(32), height: getW(32)}}
-              />
-            </PressNavigate>
-          ) : null}
+
+          <PressNavigate
+            routeName={isView ? 'ItemAdd' : 'CalendarPage'}
+            extraParam={
+              isView ? {foodId: foodInfo.id} : {onDaySelect: editExpireDate}
+            }>
+            <Image_local
+              tint={'#E6E8E9'}
+              source={COMMON_IC.rightArrow}
+              style={{width: getW(32), height: getW(32)}}
+            />
+          </PressNavigate>
         </Horizon>
         <Bar />
         <Horizon style={ST.descCard} id="메모">

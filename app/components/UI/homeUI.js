@@ -32,7 +32,7 @@ const Atoms = {
   add: ({style, foodId}) => (
     <PressNavigate
       routeName={'ItemAdd'}
-      extraParam={{foodId}}
+      extraParam={{foodId, isAdding: true, isView: false}}
       style={{
         borderRadius: getW(40),
         backgroundColor: 'white',

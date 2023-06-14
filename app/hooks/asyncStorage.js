@@ -21,6 +21,9 @@ const saveList = async newList => {
 const LocalStorage = {
   addFood: async ({foodObj}) => {
     const lastList = await getlastList();
+    if (isEmpty(foodObj)) {
+      return lastList;
+    }
     const newList = [...lastList, foodObj];
     await saveList(newList);
     return newList;
@@ -53,6 +56,9 @@ const LocalStorage = {
   save: async ({foodList}) => {
     await saveList(foodList);
     return foodList;
+  },
+  reset: async () => {
+    await AsyncStorage.clear();
   },
 };
 export default LocalStorage;

@@ -11,6 +11,8 @@ import ItemDetail from '@routes/normal/ItemDetail';
 import ItemList from '@routes/normal/ItemList';
 import ItemAdd from '@routes/modal/ItemAdd';
 import CalendarPage from '@routes/modal/CalandarPage';
+import CategorySelecter from '@routes/modal/CategorySelecter';
+import DeleteConfirm from '@routes/modal/DeleteConfirm';
 // import createStackNavigator from '@navigators/createStackNavigator';
 // import {createMyStack} from './MyStackNavigator';
 
@@ -47,9 +49,11 @@ function RootStackNavigator({splashOptions = {}}) {
       </Stack.Group>
       <Stack.Group screenOptions={{...TransitionOptions.BOTTOM_MODAL}}>
         <Stack.Screen name="ItemAdd" component={ItemAdd} />
+        <Stack.Screen name="DeleteConfirm" component={DeleteConfirm} />
       </Stack.Group>
       <Stack.Group screenOptions={{...TransitionOptions.CENTER_MODAL}}>
         <Stack.Screen name="CalendarPage" component={CalendarPage} />
+        <Stack.Screen name="CategorySelecter" component={CategorySelecter} />
       </Stack.Group>
     </Stack.Navigator>
   );

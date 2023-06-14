@@ -1,8 +1,9 @@
 import {DetailTPL} from '@UI/detailUI';
-import {isEmpty} from '@_utils/validation';
+import {isEmpty, isExist} from '@_utils/validation';
 import {getH, getW} from '@constants/appUnits';
 import {_useNavFunctions} from '@hooks/navigationHook';
 import {UserDataContext} from '@hooks/userDataContext';
+import COLORS from '@styles/colors';
 import font from '@styles/textStyle';
 import {PressAsync} from '@userInteraction/pressAction';
 import React, {useContext, useState} from 'react';
@@ -19,32 +20,48 @@ const Handle = ({style}) => (
   />
 );
 
-function ItemAddPage({headerHeight, foodId = null, isEdit = true}) {
+function ItemAddPage({
+  headerHeight,
+  foodId = null,
+  isView = true,
+  isAdding = false,
+}) {
   const {getFoodWithId, edit, add} = useContext(UserDataContext);
-  const [newInfo, setNewInfo] = useState(isEdit ? getFoodWithId({foodId}) : {});
-  console.log('item add info : ', foodId, newInfo);
+  const [newInfo, setNewInfo] = useState(
+    isAdding
+      ? {
+          amount: 1,
+        }
+      : getFoodWithId({foodId}),
+  );
+  const isValid =
+    newInfo.amount >= 1 &&
+    isExist(newInfo.expireDate) &&
+    isExist(newInfo.foodName);
   const {_goBack} = _useNavFunctions();
   const completeEdit = async () => {
-    isEdit
-      ? await edit({foodId: foodId, newObj: newInfo})
-      : await add({
-          newObj: {...newInfo, id: newInfo.foodName + newInfo.expireDate},
-        });
+    isAdding
+      ? await add({
+          foodObj: {
+            ...newInfo,
+            id: newInfo.foodName + newInfo.expireDate,
+            addDate: new Date().getTime(),
+          },
+        })
+      : await edit({foodId: foodId, newObj: newInfo});
     _goBack();
   };
   const editAmount = newNumber => {
-    console.log('edit amount .... : ', newNumber);
     setNewInfo(prev => ({...prev, amount: newNumber}));
   };
   const editExpireDate = newTimeStamp => {
-    console.log('onday select .... : ', newTimeStamp);
     setNewInfo(prev => ({...prev, expireDate: newTimeStamp}));
   };
   const editCategory = foodName => {
     setNewInfo(prev => ({...prev, foodName}));
   };
 
-  if (isEmpty(newInfo) && isEdit) {
+  if (isEmpty(newInfo) && !isAdding) {
     return <View />;
   } else {
     return (
@@ -53,25 +70,29 @@ function ItemAddPage({headerHeight, foodId = null, isEdit = true}) {
           <Handle style={{alignSelf: 'center', marginVertical: getW(16)}} />
           <DetailTPL.detailInfo
             foodInfo={newInfo}
-            isEdit
+            isView={isView}
+            isAdding={isAdding}
             editAmount={editAmount}
             editExpireDate={editExpireDate}
             editCategory={editCategory}
           />
         </View>
         <PressAsync
+          disable={!isValid}
           onPress={completeEdit}
           style={{
             width: getW(343),
             alignSelf: 'center',
             marginBottom: getW(30),
             borderRadius: getW(10),
-            backgroundColor: '#62E38C',
+            backgroundColor: isValid ? '#62E38C' : COLORS.grayA6,
             alignItems: 'center',
             justifyContent: 'center',
             paddingVertical: getW(15),
           }}>
-          <Text style={[font.semi18, {color: 'white'}]}>수정 완료</Text>
+          <Text style={[font.semi18, {color: 'white'}]}>
+            {isAdding ? '추가 완료' : '수정 완료'}
+          </Text>
         </PressAsync>
       </View>
     );

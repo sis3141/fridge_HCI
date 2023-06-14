@@ -12,6 +12,8 @@ export const navigationConfig = {
       'ItemList',
       'ItemAdd',
       'CalendarPage',
+      'CategorySelecter',
+      'DeleteConfirm',
     ],
     paths: {},
     linkConfig: {},
@@ -50,6 +52,18 @@ export const navigationConfig = {
     paths: {},
     linkConfig: {
       path: 'calendar',
+    },
+  },
+  CategorySelecter: {
+    paths: {},
+    linkConfig: {
+      path: 'selectCategory',
+    },
+  },
+  DeleteConfirm: {
+    paths: {},
+    linkConfig: {
+      path: 'delete',
     },
   },
 };

@@ -22,6 +22,7 @@ const initialData = {
 const reducer = (prevState, action) => {
   switch (action.type) {
     case 'UPDATE': {
+      console.log('🎁update foodlist');
       const newList = action.newList;
       const dangerList = newList.filter(foodObj => {
         const {addDate, expireDate} = foodObj;
@@ -64,18 +65,24 @@ export function CreateUserDataContext(props) {
       console.log('😊😊new list after update : ', newList);
       actions.update(newList);
     },
-    delete: async ({foodId}) => {
+    reset: async () => {
+      await LocalStorage.reset();
+      actions.update([]);
+    },
+    deleteFood: async ({foodId}) => {
       const newList = await LocalStorage.deleteFood({foodId});
       actions.update(newList);
+    },
+    getTestData: async () => {
+      await LocalStorage.save({foodList: FOOD_LIST});
+      actions.update(FOOD_LIST);
     },
   }));
 
   async function initUser() {
     try {
       let lastList = [];
-      if (IS_TEST) {
-        await LocalStorage.save({foodList: FOOD_LIST});
-      }
+
       lastList = await LocalStorage.getFoodList();
 
       console.log('got last list : ', lastList);

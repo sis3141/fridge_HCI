@@ -7,11 +7,11 @@ import ItemAddPage from '@pages/ItemAddPage';
 function ItemAdd() {
   const route = useRoute();
   const {_getCurParam, _goBack} = _useNavFunctions();
-  const {foodId} = _getCurParam();
+  const {foodId, isView, isAdding} = _getCurParam();
 
   return (
     <View_BottomModal>
-      <ItemAddPage foodId={foodId} />
+      <ItemAddPage foodId={foodId} isAdding={isAdding} isView={isView} />
     </View_BottomModal>
   );
 }

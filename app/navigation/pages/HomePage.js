@@ -1,15 +1,19 @@
 import {HomeTPLs} from '@UI/homeUI';
 import {FOODS} from '@_constants/dataConfig';
 import {isEmpty} from '@_utils/validation';
-import {getW} from '@constants/appUnits';
+import {WINDOW_HEIGHT, WINDOW_WIDTH, getW} from '@constants/appUnits';
 import {CALCS} from '@hooks/foodCalc';
 import {UserDataContext} from '@hooks/userDataContext';
 import {FlatList_P} from '@platformPackage/gestureComponent';
+import COLORS from '@styles/colors';
+import font from '@styles/textStyle';
+import {PressCallback} from '@userInteraction/pressAction';
 import React, {useContext} from 'react';
-import {View} from 'react-native';
+import {Text, View} from 'react-native';
 
 function HomePage({headerHeight}) {
-  const {foodList, dangerList, dangerNum} = useContext(UserDataContext);
+  const {foodList, dangerList, dangerNum, getTestData, reset} =
+    useContext(UserDataContext);
   const wholefoodNum = foodList.length;
   const {cateDict} = foodList.reduce(
     (out, foodObj) => {
@@ -55,12 +59,46 @@ function HomePage({headerHeight}) {
           />
         </View>
       }
+      ListEmptyComponent={
+        <View
+          style={{
+            width: WINDOW_WIDTH,
+            height: (WINDOW_HEIGHT * 2) / 3,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text style={[font.semi26, {color: COLORS.gray94}]}>
+            냉장고안에 아무것도 없네요
+          </Text>
+        </View>
+      }
       data={Object.values(cateDict)}
       renderItem={({item}) =>
         HomeTPLs.renderMyItem({
           cateItem: item,
           style: {marginBottom: getW(30)},
         })
+      }
+      ListFooterComponent={
+        <View
+          style={{
+            width: WINDOW_WIDTH,
+            paddingVetical: getW(30),
+            alignItems: 'center',
+          }}>
+          <PressCallback
+            onPress={() => {
+              getTestData();
+            }}>
+            <Text style={[font.semi12]}>테스트 데이터 불러오기</Text>
+          </PressCallback>
+          <PressCallback
+            onPress={() => {
+              reset();
+            }}>
+            <Text style={[font.semi12]}>초기화</Text>
+          </PressCallback>
+        </View>
       }
     />
   );

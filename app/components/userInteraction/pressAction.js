@@ -271,7 +271,7 @@ export const PressAsync = ({
       //android_ripple
       // android_ripple={{color: 'black', foreground: true}}
       android_ripple={ripple ? RIPPLE_STYLE.default : null}
-      disable={(isProcessing && disableWait) || disable}
+      disabled={(isProcessing && disableWait) || disable}
       onPress={async () => {
         setIsProcessing(true);
         await onPress();

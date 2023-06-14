@@ -27,6 +27,10 @@ export function pairsToFlat(pairList) {
 }
 
 export function getDateString(dateObj, option = 'default') {
+  if (isEmpty(dateObj.getFullYear())) {
+    console.log('date obj empty: ', dateObj);
+    return '';
+  }
   const year = String(dateObj.getFullYear());
   let month = String(dateObj.getMonth() + 1);
   if (month.length === 1) {
@@ -36,6 +40,7 @@ export function getDateString(dateObj, option = 'default') {
   if (date.length === 1) {
     date = '0' + date;
   }
+
   if (option === 'default') {
     return year + '.' + month + '.' + date;
   } else {
