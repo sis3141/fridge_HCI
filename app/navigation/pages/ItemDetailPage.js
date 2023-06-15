@@ -42,7 +42,7 @@ function ItemDetailPage({headerHeight, foodId}) {
     const fullRange = CALCS.getFullRange({addDate, expireDate});
     const isDanger = CALCS.isDanger({dday});
     const indiColor = isDanger ? COLORS.red : COLORS.green;
-    const dangerRate = dday >= 0 ? (fullRange - dday) / fullRange : 1;
+    const dangerRate = dday >= 0 ? 1 - (fullRange - dday) / fullRange : 1;
     return (
       <ScrollView_P style={{backgroundColor: 'white'}}>
         <DetailTPL.detailHeader foodInfo={itemInfo} isDanger={isDanger} />
@@ -70,7 +70,7 @@ function ItemDetailPage({headerHeight, foodId}) {
               marginVertical: getW(8),
               backgroundColor: '#e6e8e9',
               borderRadius: getW(20),
-              alignItems: 'flex-start',
+              alignItems: 'flex-end',
               alignSelf: 'center',
             }}>
             <View
