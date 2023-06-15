@@ -60,7 +60,7 @@ function ItemDetailPage({headerHeight, foodId}) {
         </Text>
         <View style={[ST.barCard, {marginBottom: getW(10)}]}>
           <Text
-            style={[font.semi14, {color: '#a6a6a6', alignSelf: 'flex-end'}]}>
+            style={[font.semi14, {color: '#a6a6a6', alignSelf: 'flex-start'}]}>
             소비기한
           </Text>
           <View
@@ -70,7 +70,7 @@ function ItemDetailPage({headerHeight, foodId}) {
               marginVertical: getW(8),
               backgroundColor: '#e6e8e9',
               borderRadius: getW(20),
-              alignItems: 'flex-end',
+              alignItems: 'flex-start',
               alignSelf: 'center',
             }}>
             <View
@@ -84,10 +84,10 @@ function ItemDetailPage({headerHeight, foodId}) {
           </View>
           <Horizon style={{width: '100%', justifyContent: 'space-between'}}>
             <Text style={[font.semi14, {color: '#a6a6a6'}]}>
-              {getDateString(new Date(addDate))}
+              {getDateString(new Date(expireDate))}
             </Text>
             <Text style={[font.semi14, {color: '#a6a6a6'}]}>
-              {getDateString(new Date(expireDate))}
+              {getDateString(new Date(addDate))}
             </Text>
           </Horizon>
         </View>
